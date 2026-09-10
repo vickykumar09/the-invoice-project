@@ -3,6 +3,7 @@ import { FormValues } from "@/form/types";
 import { InvoiceDiscount, InvoiceInfoProps,  } from "../types/invoice";
 import { InvoiceCustomerForm } from "../types/customer";
 import { toValueType } from "./converter";
+import { toPaise } from "@/utils/money/convert";
 
 export function toInvoiceInsert(
   data: FormValues<InvoiceInfoProps>
@@ -65,7 +66,7 @@ export function toInvoiceDiscountInsert(
   const res = {
     invoice_discount_type: toValueType(invoice_discount_type),
     invoice_discount_value: Number(invoice_discount_value),
-    invoice_discount_amount: Number(invoice_discount_amount)
+    invoice_discount_amount: toPaise(Number(invoice_discount_amount))
   }
 
   return res;

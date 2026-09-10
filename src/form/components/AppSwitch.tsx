@@ -15,7 +15,6 @@ export default function AppSwitch({
   value,
   onChange,
 }: Props) {
-  
   const isEnabled = value === 'true';
 
   return (
@@ -57,6 +56,7 @@ const styles = StyleSheet.create({
   descriptionTxt: {
     flex: 1,
     fontSize: 15,
+    fontFamily: "NunitoBold",
   },
   descriptionActive: {
     color: gray[9],

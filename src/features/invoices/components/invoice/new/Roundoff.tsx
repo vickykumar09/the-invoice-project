@@ -1,7 +1,7 @@
 import ModalHeader from "@/components/headers/ModalHeader";
 import ActionBtn from "@/components/ui/buttons/ActionBtn";
 import TextLink from "@/components/ui/TextLink";
-import { blue, gray, rose } from "@/constants/color-palettes";
+import { blue, gray, green, red, rose } from "@/constants/color-palettes";
 import { ROUND_OFF_MODES } from "@/features/invoices/constants/options/round-off-modes";
 import { updateInvoiceRoundOff } from "@/features/invoices/services/sqlite/adjustments";
 import {
@@ -27,7 +27,7 @@ type Props = {
   onChange: () => Promise<void>;
 };
 
-export default function InvoiceRoundoffComponent({
+export default function InvoiceRoundOffComponent({
   invoiceId,
   initialData,
   preRoundOffTotalInPaise,
@@ -60,6 +60,7 @@ export default function InvoiceRoundoffComponent({
     closeModal();
   };
 
+  const showClearBtn = initialData.round_off_mode;
   return (
     <View>
       {/* Label & Value */}
@@ -67,8 +68,7 @@ export default function InvoiceRoundoffComponent({
         <Text
           style={{
             fontSize: 16,
-            fontWeight: "600",
-            fontFamily: "Rajdhanibold",
+            fontWeight: "600"
           }}
         >
           Roundoff
@@ -117,10 +117,32 @@ export default function InvoiceRoundoffComponent({
 
                 <View style={globalStyles.flex_items_center_spaced_between}>
                   <Text style={{ fontSize: 15, color: gray[5] }}>
-                    Rounded Off To
+                    Rounded Off 
                   </Text>
                   <Text>{formatCurrency(fromPaise(roundedOffTo))}</Text>
                 </View>
+              <Text>fsadfd</Text>
+              </View>
+
+              <View style={[styles.footerContainer, { justifyContent: showClearBtn ? "space-between" : "center" }]}>
+                {!showClearBtn &&
+                  <TextLink
+                    text="Clear"
+                    size={18}
+                    color={red[6]}
+                    onPress={() => {
+                      const dt = {
+                        round_off_mode: '',
+                        round_off_amoutn: ''
+                      }
+        
+                      handleUpdate()
+                    }}
+                  />
+                }
+                <Text style={styles.btn} onPress={handleUpdate}>
+                  Apply
+                </Text>
               </View>
 
               <ActionBtn
@@ -138,4 +160,24 @@ export default function InvoiceRoundoffComponent({
   );
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  btn: {
+    backgroundColor: green[0],
+    borderWidth: 1.5,
+    borderColor: green[9],
+    fontFamily: "NunitoExtraBold",
+    color: green[9],
+    paddingHorizontal: 20,
+    paddingBottom: 8,
+    fontSize: 15,
+    paddingVertical: 6,
+    borderRadius: 99,
+  },
+  footerContainer: {
+    paddingBottom: 20,
+    paddingTop: 8,
+    paddingHorizontal: 32, 
+    flexDirection: 'row',
+    alignItems: 'center',
+  }
+});

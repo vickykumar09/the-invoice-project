@@ -1,6 +1,6 @@
 // features/invoices/mappers/invoice.mapper.ts
 
-import { Invoice, InvoiceDiscount, InvoiceInfoProps, InvoiceRoundOff, InvoiceRoundOffMode, InvoiceSummary, NewInvoice } from "../../types/invoice";
+import { Invoice, InvoiceDiscount, InvoiceInfoProps, InvoiceRoundOff, InvoiceRoundOffMode, InvoiceSummary } from "../../types/invoice";
 
 
 export function mapInvoiceToInfo(invoice: Invoice | NewInvoice): InvoiceInfoProps {

@@ -1,28 +1,23 @@
 import { getDB } from "@/libs/db/database";
 import { InvoiceDiscount, InvoiceRoundOffMode } from "../../types/invoice";
 import { validateDiscount } from "../../utils/validators/invoice";
+import { Result } from "@/types/shared";
 
 // ------ Update Invoice Discount ------ //
 export const updateInvoiceDiscount = async (
   invoiceId: string,
   discountData: InvoiceDiscount
 ) => {
-  // 1. Calculate Values
+  // 1. Destructure & Calculate Values
   const {
     invoice_discount_type,
     invoice_discount_value,
     invoice_discount_amount
   } = discountData;
+  
   const now = new Date().toISOString();
 
-  // 2. Generate Insert Customer Object
-  const discount: InvoiceDiscount = {
-    ...discountData,
-    updated_at: now,
-    is_synced: false,
-  };
-
-  // 3. Validate Discount
+  // 2. Validate Discount
   const errors = validateDiscount(discountData);
   console.log(errors)
 
@@ -33,11 +28,11 @@ export const updateInvoiceDiscount = async (
         code: "VALIDATION_ERROR",
         message: "Invalid invoice discount.",
         fields: errors,
-      },
+      }
     };
   }
 
-  // 4. DB operation
+  // 3. DB operation
   try {
     const db = await getDB();
     const res = await db.runAsync(

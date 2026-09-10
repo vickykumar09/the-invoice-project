@@ -3,7 +3,7 @@ import { gray, green, red } from "@/constants/color-palettes";
 import globalStyles from "@/styles/globalStyles";
 import modalStyle from "@/styles/modalStyles";
 import React from "react";
-import { Alert, Modal, StyleSheet, Text, View } from "react-native";
+import { Alert, Modal, ScrollView, StyleSheet, Text, View } from "react-native";
 
 import FormGuidelines from "@/components/common/FormGuidelines";
 import TextLink from "@/components/ui/TextLink";
@@ -19,6 +19,7 @@ import { useModal } from "@/hooks/useModal";
 import { showError, showSuccess } from "@/utils/alerts";
 import { fromPaise } from "@/utils/money/convert";
 import { FontAwesome } from "@expo/vector-icons";
+import { formatCurrency } from "@/utils/money/format";
 
 type Props = {
   invoiceId: string;
@@ -39,21 +40,19 @@ export default function InvoiceDiscountComponent({
     invoice_discount_amount,
   } = initialData;
 
-  // Handle Update
+  // Handle invoice discount update
   const handleUpdate = async (
+    action: 'update' | 'clear',
     data: FormValues<InvoiceDiscount>,
-    setErrors: React.Dispatch<
-      React.SetStateAction<FormErrors<InvoiceDiscount>>
-    >,
+    setErrors: React.Dispatch<React.SetStateAction<FormErrors<InvoiceDiscount>>>
   ) => {
     // 1. Validate form values
-    const formErrors = validateForm<InvoiceDiscount>(
-      data,
-      INVOICE_DISCOUNT_FIELDS,
-    );
-    if (Object.keys(formErrors).length > 0) {
-      setErrors(formErrors);
-      return;
+    if(action === 'update') {
+      const formErrors = validateForm<InvoiceDiscount>(data, INVOICE_DISCOUNT_FIELDS);
+      if (Object.keys(formErrors).length > 0) {
+        setErrors(formErrors);
+        return;
+      }
     }
 
     // 2. Convert form values to database insert values
@@ -62,40 +61,48 @@ export default function InvoiceDiscountComponent({
     // 3. Send database-ready data to SQLite
     try {
       const res = await updateInvoiceDiscount(invoiceId, insertData);
-      if (!res.success) {
-        if (res.error.code === "VALIDATION_ERROR") {
-          setErrors(res.error.fields ?? {});
-        }
 
-        Alert.alert(res.error.message);
+      if (!res.success) {
+        Alert.alert("Update failed!", res.error?.message);
+        setErrors(res?.error?.fields)
         return;
       }
 
-      showSuccess("Invoice discount updated successfully.", async () => {
-        await onChange();
-        closeModal();
-      });
+      showSuccess(
+        "Invoice discount updated successfully.",
+        async () => { await onChange(); closeModal()}
+      );
     } catch (e) {
       console.log(e);
       showError("Something went wrong. Please try again.");
     }
   };
 
+  // Render Footer
   const renderFooter = ({
     data,
-    setErrors,
+    setErrors
   }: FormController<InvoiceDiscount>) => {
+    const showClearBtn = initialData.invoice_discount_type;
     return (
-      <View
-        style={[globalStyles.flex_items_center_spaced_between, { padding: 20 }]}
-      >
-        <TextLink
-          text="Clear"
-          size={18}
-          color={red[6]}
-          onPress={() => handleUpdate(data, setErrors)}
-        />
-        <Text style={styles.btn} onPress={() => handleUpdate(data, setErrors)}>
+      <View style={[styles.footerContainer, { justifyContent: showClearBtn ? "space-between" : "center" }]}>
+        {showClearBtn &&
+          <TextLink
+            text="Clear"
+            size={18}
+            color={red[6]}
+            onPress={() => {
+              const dt = {
+                invoice_discount_type: '',
+                invoice_discount_value: '',
+                invoice_discount_amount: ''
+              }
+
+              handleUpdate('clear', dt, setErrors)
+            }}
+          />
+        }
+        <Text style={styles.btn} onPress={() => handleUpdate('update', data, setErrors)}>
           Apply
         </Text>
       </View>
@@ -105,7 +112,7 @@ export default function InvoiceDiscountComponent({
   return (
     <View>
       <View style={globalStyles.flex_items_center_spaced_between}>
-        <Text style={{ fontSize: 16 }}>Invoice Discount</Text>
+        <Text style={{ fontSize: 16, fontWeight: 600 }}>Invoice Discount</Text>
         <TextLink text="Apply" size={16} onPress={openModal} />
       </View>
 
@@ -119,17 +126,12 @@ export default function InvoiceDiscountComponent({
           color={gray[6]}
           style={{ marginTop: 4 }}
         />
-        {invoice_discount_type === null && (
-          <Text style={{ color: gray[5] }}>₹{fromPaise(0)}</Text>
-        )}
-        {invoice_discount_type === "fixed" && (
-          <Text style={{ color: gray[5] }}>
-            ₹{fromPaise(invoice_discount_value)}
-          </Text>
-        )}
-        {invoice_discount_type === "percentage" && (
-          <Text style={{ color: gray[5] }}>{invoice_discount_value}%</Text>
-        )}
+        <Text style={{ color: gray[5] }}>
+          {invoice_discount_type === "percentage"
+            ? `${invoice_discount_value}%`
+            : formatCurrency(fromPaise(invoice_discount_type === "fixed" ? invoice_discount_value : 0))
+          }
+        </Text>
       </View>
 
       {/* Modal - To set invoice discount value */}
@@ -144,17 +146,17 @@ export default function InvoiceDiscountComponent({
               header="Invoice Discount"
               onPress={closeModal}
             />
-
-            <Form<InvoiceDiscount>
-              initialData={initialData}
-              sections={[{ fields: INVOICE_DISCOUNT_FIELDS }]}
-              fieldRenderer={itemFieldRenderer}
-              renderFooter={renderFooter}
-            />
-
-            <FormGuidelines
-              points={["Make sure to set the discount"]}
-            />
+            <View style={{ backgroundColor: gray[0] }}>
+              <Form<InvoiceDiscount>
+                initialData={initialData}
+                sections={[{ fields: INVOICE_DISCOUNT_FIELDS }]}
+                fieldRenderer={itemFieldRenderer}
+                renderFooter={renderFooter}
+              />
+              <FormGuidelines
+                points={["Make sure to set the discount"]}
+              />
+            </View>
           </View>
         </View>
       </Modal>
@@ -175,4 +177,11 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     borderRadius: 99,
   },
+  footerContainer: {
+    paddingBottom: 20,
+    paddingTop: 8,
+    paddingHorizontal: 32, 
+    flexDirection: 'row',
+    alignItems: 'center',
+  }
 });

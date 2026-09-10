@@ -5,7 +5,9 @@ export type InvoiceValidationErrors = Partial<
   Record<keyof Invoice, string>
 >
 
-export function validateInvoice(invoice: Partial<Invoice>): InvoiceValidationErrors {
+export function validateInvoice(
+  invoice: Partial<Invoice>
+): InvoiceValidationErrors {
   const errors: InvoiceValidationErrors = {};
 
   // Required fields
@@ -45,6 +47,7 @@ export const cessValueValidator = (
 export type DiscountValidationErrors = Partial<
   Record<keyof InvoiceDiscount, string>
 >;
+
 // Discount Value Validator
 export function validateDiscount(
   discount: InvoiceDiscount
@@ -59,6 +62,9 @@ export function validateDiscount(
 
   switch (invoice_discount_type) {
     case 'percentage':
+      if(invoice_discount_value <= 0) {
+        errors.invoice_discount_value = "Discount percentage cannot be less than or equal to 0%.";
+      }
       if(invoice_discount_value > 100) {
         errors.invoice_discount_value = "Discount percentage cannot exceed 100%.";
       }

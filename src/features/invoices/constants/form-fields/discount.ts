@@ -32,7 +32,7 @@ export const INVOICE_DISCOUNT_FIELDS: FormField<InvoiceDiscount>[] = [
 
     constraints: {
       type: 'decimal',
-      required: false,
+      required: true,
       minLength: 1,
       maxLength: 8,
     }

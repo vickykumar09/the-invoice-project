@@ -29,7 +29,7 @@ export default function Form<T extends object>({
   const {
     data,
     errors,
-    // setData,
+    setData,
     setErrors,
     handleFocus,
     handleChange,
