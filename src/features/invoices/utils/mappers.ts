@@ -1,12 +1,12 @@
 import { normalizeBooleanString } from "@/form/utils/normalize";
 import { FormValues } from "@/form/types";
-import { InvoiceDiscount, InvoiceInfoFormFields } from "../types/invoice";
+import { InvoiceDiscount, InvoiceInfoProps,  } from "../types/invoice";
 import { InvoiceCustomerForm } from "../types/customer";
 import { toValueType } from "./converter";
 
 export function toInvoiceInsert(
-  data: FormValues<InvoiceInfoFormFields>
-): InvoiceInfoFormFields {
+  data: FormValues<InvoiceInfoProps>
+): InvoiceInfoProps {
   const {
    invoice_date,
    place_of_supply,
@@ -29,12 +29,26 @@ export function toInvoiceInsert(
 export function toInvoiceCustomerInsert(
   data: FormValues<InvoiceCustomerForm>
 ): InvoiceCustomerForm {
-  const res = {
-    ...data,
-    is_shipping_same_as_billing: normalizeBooleanString(data.is_shipping_same_as_billing)
-  }
+  const isShippingSame = normalizeBooleanString(
+    data.is_shipping_same_as_billing
+  );
 
-  return res
+  return {
+    ...data,
+    is_shipping_same_as_billing: isShippingSame,
+
+    ...(isShippingSame && {
+      ship_to_name: null,
+      ship_to_address_line1: null,
+      ship_to_address_line2: null,
+      ship_to_city: null,
+      ship_to_state_code: null,
+      ship_to_pincode: null,
+      ship_to_phone: null,
+      ship_to_email: null,
+      ship_to_gstin: null,
+    }),
+  };
 }
 
 

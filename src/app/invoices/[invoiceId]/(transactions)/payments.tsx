@@ -15,7 +15,6 @@ import { InvoicePayment } from "@/features/invoices/types";
 
 import ListEmpty from "@/components/flatlist/ListEmpty";
 import { gray, rose } from "@/constants/color-palettes";
-import NewPaymentComponent from "@/features/invoices/components/invoice/actions/Payment";
 import { getInvoicePayments } from "@/features/invoices/services/sqlite/actions/payment";
 import usePagination from "@/hooks/usePagination";
 import globalStyles from "@/styles/globalStyles";
@@ -38,13 +37,13 @@ export default function InvoicePaymentsScreen() {
   }, []);
 
   // Render Footer
-  const renderFooter = () => {
-    return (
-      <View style={styles.invoiceItemComponentContainer}>
-        <NewPaymentComponent invoiceId={invoiceId as string} />
-      </View>
-    );
-  };
+  // const renderFooter = () => {
+  //   return (
+  //     <View style={styles.invoiceItemComponentContainer}>
+  //       <NewPaymentComponent invoiceId={invoiceId as string} />
+  //     </View>
+  //   );
+  // };
 
   // Render Empty
   const renderEmpty = () => {
@@ -70,7 +69,7 @@ export default function InvoicePaymentsScreen() {
             keyExtractor={(item) => item.id}
             renderItem={renderItem}
             ItemSeparatorComponent={Separator}
-            ListFooterComponent={renderFooter}
+            // ListFooterComponent={renderFooter}
             ListEmptyComponent={!loading ? renderEmpty : null}
             contentContainerStyle={
               data.length <= 0 && { flex: 1, backgroundColor: "white" }

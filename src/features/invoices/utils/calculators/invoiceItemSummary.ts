@@ -1,6 +1,24 @@
 import { toPaise } from '@/utils/money/convert';
-import { InvoiceItemSummaryParams } from '../../types';
 import { FormValues } from '@/form/types';
+import { InvoiceItemSummaryParams } from '../../types/item';
+
+
+/**
+ * 
+ * Tax Exclusive
+ *  - Amount = Qty × Rate
+ *  - Apply discount.
+ *  - Taxable Value = Amount − Discount.
+ *  - Calculate GST and CESS.
+ *  - Total = Taxable Value + GST + CESS.
+ * 
+ * Tax Inclusive
+ *  - Amount = Qty × Rate (includes tax).
+ *  - Convert it to the taxable value first.
+ *  - Apply the discount to the taxable value.
+ *  - Calculate GST and CESS on the discounted taxable value.
+ *  - Total = Taxable Value + GST + CESS. 
+ */ 
 
 /**
  * Extracts the tax-exclusive rate from a tax-inclusive rate.
@@ -123,25 +141,4 @@ export function calculateInvoiceItemSummary({
     cess_amount,
     total_amount,
   };
-}
-
-
-
-
-/**
- * 
- * Tax Exclusive
- *  - Amount = Qty × Rate
- *  - Apply discount.
- *  - Taxable Value = Amount − Discount.
- *  - Calculate GST and CESS.
- *  - Total = Taxable Value + GST + CESS.
- * 
- * Tax Inclusive
- *  - Amount = Qty × Rate (includes tax).
- *  - Convert it to the taxable value first.
- *  - Apply the discount to the taxable value.
- *  - Calculate GST and CESS on the discounted taxable value.
- *  - Total = Taxable Value + GST + CESS. 
- */ 
- 
+} 

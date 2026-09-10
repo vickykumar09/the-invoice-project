@@ -1,32 +1,29 @@
+import React from "react";
+import { Alert, Modal, ScrollView, StyleSheet, View } from "react-native";
+import { Feather } from "@expo/vector-icons";
+import FormGuidelines from "@/components/common/FormGuidelines";
 import ModalHeader from "@/components/headers/ModalHeader";
 import ActionBtn from "@/components/ui/buttons/ActionBtn";
 import TextLink from "@/components/ui/TextLink";
 import { blue, gray, rose } from "@/constants/color-palettes";
 import { itemFieldRenderer } from "@/features/catalog/constants/ItemFormRenderer";
-import {
-  BILLING_FIELDS,
-  SHIPPING_FIELDS,
-  SHIPPING_SAME_AS_BILLING_FIELD,
-} from "@/features/invoices/constants/form-fields/customer";
+import { BILLING_FIELDS, SHIPPING_FIELDS, SHIPPING_SAME_AS_BILLING_FIELD } from "@/features/invoices/constants/form-fields/customer";
+import { INITIAL_INVOICE_CUSTOMER_STATE } from "@/features/invoices/constants/initial-states/customer";
 import { upsertInvoiceCustomer } from "@/features/invoices/services/sqlite/customer";
-import {
-  InvoiceCustomerData,
-  InvoiceCustomerForm,
-} from "@/features/invoices/types/customer";
+import { InvoiceCustomerForm } from "@/features/invoices/types/customer";
 import { toInvoiceCustomerInsert } from "@/features/invoices/utils/mappers";
 import Form from "@/form/Form";
 import { FormController, FormErrors, FormValues } from "@/form/types";
-import { validateForm } from "@/form/validators/form";
 import { useModal } from "@/hooks/useModal";
+import globalStyles from "@/styles/globalStyles";
 import modalStyle from "@/styles/modalStyles";
 import { confirmDiscard, showError, showSuccess } from "@/utils/alerts";
-import { Feather } from "@expo/vector-icons";
-import React from "react";
-import { Alert, Modal, ScrollView, StyleSheet, View } from "react-native";
+import { normalizeBooleanString } from "@/form/utils/normalize";
+import { validateForm } from "@/form/validators/form";
 
 type Props = {
   invoiceId: string;
-  initialData: InvoiceCustomerData | null;
+  initialData: InvoiceCustomerForm | null;
   onChange: () => Promise<void>;
 };
 
@@ -39,23 +36,21 @@ export default function InvoiceCustomerFormComponent({
 
   const formSections = [
     { title: "Billing Details", fields: BILLING_FIELDS },
-    { fields: SHIPPING_SAME_AS_BILLING_FIELD },
+    { title: "Shipping Details", fields: SHIPPING_SAME_AS_BILLING_FIELD },
     {
-      title: "Shipping Details",
       fields: SHIPPING_FIELDS,
-      showSection: (data) => data.is_shipping_same_as_billing === "true",
+      showSection: (data: FormValues<InvoiceCustomerForm>) => data.is_shipping_same_as_billing === "true",
     },
   ];
 
   // Handle Invoice Creation
   const handleInvoiceCustomer = async (
     data: FormValues<InvoiceCustomerForm>,
-    setErrors: React.Dispatch<
-      React.SetStateAction<FormErrors<InvoiceCustomerForm>>
-    >,
+    setErrors: React.Dispatch<React.SetStateAction<FormErrors<InvoiceCustomerForm>>>,
   ) => {
-    console.log("hleo");
-    const FIELDS = [...BILLING_FIELDS, ...SHIPPING_FIELDS];
+    const FIELDS = normalizeBooleanString(data.is_shipping_same_as_billing) 
+      ? [...BILLING_FIELDS]
+      : [...BILLING_FIELDS, ...SHIPPING_FIELDS]
 
     // 1. Validate form values
     const formErrors = validateForm<InvoiceCustomerForm>(data, FIELDS);
@@ -65,6 +60,7 @@ export default function InvoiceCustomerFormComponent({
     }
 
     console.log("formErrors");
+    
     // 2. Convert form values to database insert values
     const insertData = toInvoiceCustomerInsert(data);
     console.log("insertData", insertData);
@@ -94,7 +90,15 @@ export default function InvoiceCustomerFormComponent({
     setErrors,
   }: FormController<InvoiceCustomerForm>) => {
     return (
-      <View style={styles.footerContainer}>
+      <View style={[globalStyles.flex_items_center_spaced_between, styles.footerContainer]}>
+        <ActionBtn
+          variant="filled"
+          iconName="plus"
+          btnLabel="Add Item"
+          rippleColor={rose[0]}
+          color={rose[8]}
+          onPress={() => handleInvoiceCustomer(data, setErrors)}
+        />
         <ActionBtn
           variant="filled"
           iconName="plus"
@@ -111,13 +115,19 @@ export default function InvoiceCustomerFormComponent({
     <>
       {initialData ? (
         <View style={{ alignItems: "flex-end" }}>
+          {/* Replace the below view with pressable */}
           <View style={styles.linkContainer}>
-            <Feather name="edit" size={16} color={blue[9]} />
-            <TextLink text="Edit Customer" size={16} onPress={openModal} />
+            <TextLink
+              text="Edit Customer"
+              size={16}
+              onPress={openModal}
+            />
+            <Feather name="edit" size={16} color={blue[7]} />
           </View>
         </View>
       ) : (
         <View style={{ alignItems: "center" }}>
+          {/* Replace the below view with pressable */}
           <View style={{ alignItems: "center" }}>
             <Feather name="plus" size={20} color={blue[7]} />
             <TextLink
@@ -128,7 +138,6 @@ export default function InvoiceCustomerFormComponent({
           </View>
         </View>
       )}
-      <View style={{ alignItems: "center" }}></View>
 
       {/* Modal - To set invoice discount value */}
       <Modal visible={visible} transparent statusBarTranslucent>
@@ -146,10 +155,18 @@ export default function InvoiceCustomerFormComponent({
               style={{ backgroundColor: gray[0] }}
             >
               <Form<InvoiceCustomerForm>
-                initialData={initialData ?? []}
+                initialData={initialData ?? INITIAL_INVOICE_CUSTOMER_STATE}
                 sections={formSections}
                 fieldRenderer={itemFieldRenderer}
                 renderFooter={renderFooter}
+              />
+              
+              <FormGuidelines
+                points={[
+                  "All the mandatory fields must be mentioned",
+                  "Enter upto 2 mobile numbers, separated by a comma and space. Example: 9876543210, 9123456780"
+
+                ]}
               />
             </ScrollView>
           </View>

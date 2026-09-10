@@ -1,11 +1,12 @@
 import { gray } from "@/constants/color-palettes";
 import globalStyles from "@/styles/globalStyles";
 import { formatDateString } from "@/utils/date-time/format";
-import { getStateLabel } from "@/utils/helpers/getStateLabel";
 import { StyleSheet, Text, View } from "react-native";
 import { InvoiceInfoProps } from "../../types/invoice";
 
-export default function InvoiceInfo({ data }: { data: InvoiceInfoProps }) {
+export default function InvoiceInfo({
+  data
+}: { data: InvoiceInfoProps }) {
   const {
     is_igst,
     invoice_number,
@@ -28,7 +29,7 @@ export default function InvoiceInfo({ data }: { data: InvoiceInfoProps }) {
     },
     {
       title: "Place of Supply",
-      value: getStateLabel(place_of_supply),
+      value: place_of_supply,
     },
     {
       title: "Supply Type",

@@ -114,7 +114,7 @@ export const BILLING_FIELDS: FormField<InvoiceCustomerForm>[] = [
 
     type: "TextInput",
     props: {
-      placeholder: "e.g. name@example.com",
+      placeholder: "e.g. username@example.com",
     },
 
     constraints: {
@@ -146,11 +146,11 @@ export const SHIPPING_SAME_AS_BILLING_FIELD: FormField<InvoiceCustomerForm>[] =
   [
     {
       key: "is_shipping_same_as_billing",
-      label: "Same As Billing",
+      label: "",
 
       type: "AppSwitch",
       props: {
-        description: "Shipping address same as billing",
+        description: "Same as billing",
       },
 
       constraints: {
@@ -257,7 +257,8 @@ export const SHIPPING_FIELDS: FormField<InvoiceCustomerForm>[] = [
 
     type: "TextInput",
     props: {
-      placeholder: "Enter Customer Id",
+      placeholder: "9876543210, 9123456789",
+      keyboardType: "numeric"
     },
 
     constraints: {
@@ -273,7 +274,7 @@ export const SHIPPING_FIELDS: FormField<InvoiceCustomerForm>[] = [
 
     type: "TextInput",
     props: {
-      placeholder: "Enter Customer Email",
+      placeholder: "e.g. username@example.com",
     },
 
     constraints: {
@@ -288,7 +289,7 @@ export const SHIPPING_FIELDS: FormField<InvoiceCustomerForm>[] = [
 
     type: "TextInput",
     props: {
-      placeholder: "Enter Customer Id",
+      placeholder: "e.g. 27ABCDE1234F1Z5",
     },
 
     constraints: {

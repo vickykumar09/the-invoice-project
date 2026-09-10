@@ -6,11 +6,11 @@ export const PAYMENT_FORM_FIELDS: FormField<InvoicePayment>[] = [
     key: "paid_on",
     label: "Payment Date",
 
-    component: {
-      type: "DatePicker",
-    },
+    type: "DatePicker",
+    props: {},
 
-    rules: {
+    constraints: {
+      type: "string",
       required: true,
     },
   },

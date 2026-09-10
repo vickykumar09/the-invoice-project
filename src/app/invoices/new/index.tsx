@@ -94,7 +94,7 @@ export default function NewInvoiceScreen() {
         <ActionBtn
           variant="filled"
           iconName="plus"
-          btnLabel="Create Invoice"
+          btnLabel="Create"
           rippleColor={rose[0]}
           color={rose[8]}
           onPress={() => handleCreateInvoice(data, setErrors)}
@@ -135,9 +135,7 @@ export default function NewInvoiceScreen() {
             />
 
             {/* Form Guidelines */}
-            <View style={styles.section}>
-              <FormGuidelines points={INVOICE_INFO_GUIDELINES} />
-            </View>
+            <FormGuidelines points={INVOICE_INFO_GUIDELINES} />
           </View>
         </ScrollView>
       </SafeAreaView>

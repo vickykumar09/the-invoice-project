@@ -1,13 +1,16 @@
-import { Result } from "@/types/shared";
 import { getDB } from "@/libs/db/database";
+import { Result } from "@/types/shared";
+import {
+  InvoiceCustomerData,
+  InvoiceCustomerDisplay,
+  InvoiceCustomerForm,
+} from "../../types/customer";
 import { validateCustomer } from "../../utils/validators/customer";
-import { InvoiceCustomerData, InvoiceCustomerForm } from "../../types/customer";
-
 
 export const upsertInvoiceCustomer = async (
   invoiceId: string,
-  insertData: InvoiceCustomerForm
-): Promise<Result<InvoiceCustomerData>> =>  {
+  insertData: InvoiceCustomerForm,
+): Promise<Result<InvoiceCustomerData>> => {
   // 1. Calculate Values
   const now = new Date().toISOString();
 
@@ -15,7 +18,6 @@ export const upsertInvoiceCustomer = async (
   const customer: InvoiceCustomerData = {
     ...insertData,
     invoice_id: invoiceId,
-    customer_id: null,
     created_at: now,
     updated_at: now,
     is_synced: false,
@@ -23,7 +25,7 @@ export const upsertInvoiceCustomer = async (
 
   // 3. Validate Insert Item Object
   const errors = validateCustomer(customer);
-  console.log(errors)
+  console.log(errors);
 
   if (Object.keys(errors).length > 0) {
     return {
@@ -43,17 +45,19 @@ export const upsertInvoiceCustomer = async (
   const placeholders = values.map(() => "?").join(", ");
 
   const updateColumns = columns.filter(
-    (column) => column !== "invoice_id" && column !== "created_at" && column !== "is_synced"
+    (column) =>
+      column !== "invoice_id" &&
+      column !== "created_at" &&
+      column !== "is_synced",
   );
 
   const updateClause = updateColumns
     .map((column) => `${column} = excluded.${column}`)
     .join(", ");
 
-
   try {
     const db = await getDB();
-    const res  = await db.runAsync(
+    const res = await db.runAsync(
       `
       INSERT INTO invoice_customer (${columns.join(", ")})
       VALUES (${placeholders})
@@ -61,24 +65,23 @@ export const upsertInvoiceCustomer = async (
       DO UPDATE SET
         ${updateClause}
       `,
-      values
+      values,
     );
 
-    if(res.changes === 0) {
+    if (res.changes === 0) {
       return {
         success: false,
         error: {
           code: "DATABASE_ERROR",
-          message: "Could not update invoice customer."
-        }
-      }
-    };
-    
+          message: "Could not update invoice customer.",
+        },
+      };
+    }
+
     return {
       success: true,
       data: customer,
     };
-
   } catch (error) {
     console.log(error);
     return {
@@ -89,27 +92,39 @@ export const upsertInvoiceCustomer = async (
       },
     };
   }
-}
-
+};
 
 // Get Invoice Customer
 export const getInvoiceCustomer = async (
-  invoiceId: string
-): Promise<InvoiceCustomerData | null> => {
+  invoiceId: string,
+): Promise<InvoiceCustomerDisplay | null> => {
   try {
     const db = await getDB();
-    const res = db.getFirstAsync<InvoiceCustomerData>(
+    const row = await db.getFirstAsync<InvoiceCustomerDisplay>(
       `
-      SELECT *
-      FROM invoice_customer
-      WHERE invoice_id = ?
+      SELECT
+        ic.*,
+        bill_state.name AS bill_to_state,
+        ship_state.name AS ship_to_state
+      FROM invoice_customer ic
+      LEFT JOIN places_of_supply bill_state
+        ON bill_state.code = ic.bill_to_state_code
+      LEFT JOIN places_of_supply ship_state
+        ON ship_state.code = ic.ship_to_state_code
+      WHERE ic.invoice_id = ?;
       `,
-      [invoiceId]
-    )
-    
-    return res;
+      [invoiceId],
+    );
+
+    if (!row) return null;
+
+    return {
+      ...row,
+      is_shipping_same_as_billing:
+        Number(row.is_shipping_same_as_billing) === 1,
+    };
   } catch (error) {
-    console.log(error)
-    throw error
+    console.log(error);
+    throw error;
   }
-}
+};

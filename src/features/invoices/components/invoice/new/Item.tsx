@@ -21,6 +21,8 @@ import {
   INVOICE_ITEM_TAX_FORM_FIELDS,
 } from "../../../constants/form-fields/item";
 import { INITIAL_INVOICE_ITEM_STATE } from "../../../constants/initial-states/invoice-item";
+import IconBtn from "@/components/IconBtn";
+import ActionBtn from "@/components/ui/buttons/ActionBtn";
 
 type Props = {
   invoice_id: string;
@@ -44,7 +46,10 @@ export default function InvoiceItemComponent({
   ];
 
   // Render Footer
-  const renderFooter = ({ data, setErrors }: FormController<InvoiceItem>) => {
+  const renderFooter = ({
+    data,
+    setErrors
+  }: FormController<InvoiceItem>) => {
     const {
       amount,
       discount_amount,
@@ -67,47 +72,67 @@ export default function InvoiceItemComponent({
     ];
 
     return (
-      <View style={styles.footerContainer}>
-        <View style={globalStyles.flex_items_center_spaced_between}>
-          <Text
-            style={{
-              fontFamily: "RajdhaniBold",
-              fontSize: 20,
-              letterSpacing: 0.5,
-            }}
-          >
-            Summary
-          </Text>
-        </View>
-        <View style={{ gap: 8 }}>
-          {itemsSummary.map((each) => {
-            const { title, value } = each;
-            return (
-              <View key={title}>
-                <View style={globalStyles.flex_items_center_spaced_between}>
-                  <Text style={styles.titleTxt}>{title}</Text>
-                  <Text style={styles.valueTxt}>
-                    {formatCurrency(fromPaise(value))}
-                  </Text>
+      <View style={{gap: 12}}>
+        <View style={styles.footerContainer}>
+          <View style={globalStyles.flex_items_center_spaced_between}>
+            <Text
+              style={{
+                fontFamily: "RajdhaniBold",
+                fontSize: 20,
+                letterSpacing: 0.5,
+              }}
+            >
+              Summary
+            </Text>
+          </View>
+          <View style={{ gap: 8, paddingHorizontal: 12 }}>
+            {itemsSummary.map((each) => {
+              const { title, value } = each;
+              return (
+                <View key={title}>
+                  <View style={globalStyles.flex_items_center_spaced_between}>
+                    <Text style={styles.titleTxt}>{title}</Text>
+                    <Text style={styles.valueTxt}>{formatCurrency(fromPaise(value))}</Text>
+                  </View>
                 </View>
-              </View>
-            );
-          })}
-        </View>
+              );
+            })}
+          </View>
 
-        {/* Item Total */}
-        <View
-          style={[
-            globalStyles.flex_items_center_spaced_between,
-            { borderTopWidth: 1, borderStyle: "dotted", paddingVertical: 8 },
-          ]}
-        >
-          <Text style={{ fontSize: 16, fontWeight: 600, color: gray[6] }}>
-            Item Total
-          </Text>
-          <Text style={{ fontSize: 16, fontWeight: 600 }}>
-            {formatCurrency(fromPaise(total_amount))}
-          </Text>
+          {/* Item Total */}
+          <View style={[
+              globalStyles.flex_items_center_spaced_between,
+              { borderTopWidth: 1, borderStyle: "dotted", paddingVertical: 8, paddingHorizontal: 12},
+            ]}
+          >
+            <Text style={{ fontSize: 16, fontWeight: 600, color: gray[7] }}>
+              Item Total
+            </Text>
+            <Text style={{ fontSize: 16, fontWeight: 600 }}>
+              {formatCurrency(fromPaise(total_amount))}
+            </Text>
+          </View>
+
+        </View>
+        <View style={[globalStyles.flex_items_center_spaced_between, {paddingHorizontal: 32, paddingVertical: 16}]}>
+          <ActionBtn
+          size="small"
+            variant="outlined"
+            iconName="plus"
+            btnLabel="ADD"
+            rippleColor={rose[0]}
+            color={rose[8]}
+            onPress={() => console.log('helo')}
+          />
+          <ActionBtn
+          size="small"
+            variant="filled"
+            iconName="plus"
+            btnLabel="ADD"
+            rippleColor={rose[0]}
+            color={rose[8]}
+            onPress={() => console.log('helo')}
+          />
         </View>
       </View>
     );
@@ -134,7 +159,13 @@ export default function InvoiceItemComponent({
 
   return (
     <>
-      <Feather name="plus" size={28} color={rose[8]} onPress={openModal} />
+      <IconBtn
+        icon={Feather}
+        name="plus"
+        size={28}
+        color={rose[8]}
+        onPress={openModal}
+      />
 
       <Modal
         visible={visible}
@@ -172,6 +203,12 @@ export default function InvoiceItemComponent({
                   points={[
                     "Quantity must be a whole number or a decimal number (e.g., 5 or 5.25).",
                     "Quantity can be maximum of 999999.99.",
+                    "Quantity must be a whole number or a decimal number (e.g., 5 or 5.25).",
+                    "Quantity can be maximum of 999999.99.",
+                    "Quantity must be a whole number or a decimal number (e.g., 5 or 5.25).",
+                    "Quantity can be maximum of 999999.99.",
+                    "Quantity must be a whole number or a decimal number (e.g., 5 or 5.25).",
+                    "Quantity can be maximum of 999999.99.",
                   ]}
                 />
               </View>
@@ -195,7 +232,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontFamily: "RajdhaniSemiBold",
   },
-
   titleTxt: {
     fontSize: 15,
     color: gray[6],
@@ -208,6 +244,8 @@ const styles = StyleSheet.create({
     gap: 16,
     padding: 20,
     backgroundColor: "white",
+    borderBottomWidth: 1,
+    borderBottomColor: gray[1]
   },
 });
 

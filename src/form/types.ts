@@ -150,3 +150,10 @@ export type FormController<T> = {
   data: FormValues<T>;
   setErrors: React.Dispatch<React.SetStateAction<FormErrors<T>>>;
 };
+
+export type FormProps<T> = {
+  initialData: T;
+  sections: FormSection<T>[];
+  fieldRenderer: FieldRenderer<T>;
+  renderFooter: (controller: FormController<T>) => React.ReactNode;
+};

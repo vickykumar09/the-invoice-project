@@ -27,30 +27,17 @@ export type InvoiceCustomerData = {
   created_at: string;
   updated_at: string;
   is_synced: boolean;
-}
+};
 
-
-export type InvoiceCustomerForm = Pick<
+export type InvoiceCustomerForm = Omit<
   InvoiceCustomerData,
-  | 'bill_to_name'
-  | 'bill_to_address_line1'
-  | 'bill_to_address_line2'
-  | 'bill_to_city'
-  | 'bill_to_state_code'
-  | 'bill_to_pincode'
-  | 'bill_to_phone'
-  | 'bill_to_email'
-  | 'bill_to_gstin'
+  | "invoice_id"
+  | "created_at"
+  | "updated_at"
+  | "is_synced"
+>;
 
-  | 'is_shipping_same_as_billing'
-
-  | 'ship_to_name'
-  | 'ship_to_address_line1'
-  | 'ship_to_address_line2'
-  | 'ship_to_city'
-  | 'ship_to_state_code'
-  | 'ship_to_pincode'
-  | 'ship_to_phone'
-  | 'ship_to_email'
-  | 'ship_to_gstin'
->
+export type InvoiceCustomerDisplay = InvoiceCustomerData & {
+  bill_to_state: string;
+  ship_to_state: string;
+};

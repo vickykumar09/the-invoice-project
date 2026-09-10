@@ -2,6 +2,7 @@ import ItemSeparator from "@/components/flatlist/ItemSeparator";
 import ListEmpty from "@/components/flatlist/ListEmpty";
 import ListFooter from "@/components/flatlist/ListFooter";
 import TabHeader from "@/components/headers/TabHeader";
+import SearchModal from "@/components/SearchModal";
 import { amber, gray, purple } from "@/constants/color-palettes";
 import ItemRow from "@/features/catalog/components/ItemRow";
 import {
@@ -11,7 +12,6 @@ import {
 import { ItemCounts, ItemRowData } from "@/features/catalog/types";
 import usePagination from "@/hooks/usePagination";
 import globalStyles from "@/styles/globalStyles";
-import { readDb } from "@/utils/system/storage";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
@@ -61,7 +61,6 @@ export default function CatalogScreen() {
               size={30}
               color={purple[7]}
               style={styles.productIconWrapper}
-              onPress={readDb}
             />
             <Text style={styles.labelTxt}>Products</Text>
             <Text style={styles.countTxt}>{itemCounts.productCount}</Text>
@@ -153,14 +152,14 @@ export default function CatalogScreen() {
       </SafeAreaView>
 
       {/* Search Modal */}
-      {/* <SearchModal
+      <SearchModal
         entity="items"
         visible={openSearch}
         onClose={() => setOpenSearch(false)}
         keyExtractor={(item: ItemRowData) => item.id}
         renderItem={renderItem}
         searchFn={getCatalogItems}
-      /> */}
+      />
     </>
   );
 }

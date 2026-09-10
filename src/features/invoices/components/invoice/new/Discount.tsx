@@ -133,10 +133,18 @@ export default function InvoiceDiscountComponent({
       </View>
 
       {/* Modal - To set invoice discount value */}
-      <Modal visible={visible} transparent statusBarTranslucent>
+      <Modal
+        visible={visible}
+        transparent
+        statusBarTranslucent
+      >
         <View style={modalStyle.overlay}>
           <View style={modalStyle.container}>
-            <ModalHeader header="Invoice Discount" onPress={closeModal} />
+            <ModalHeader
+              header="Invoice Discount"
+              onPress={closeModal}
+            />
+
             <Form<InvoiceDiscount>
               initialData={initialData}
               sections={[{ fields: INVOICE_DISCOUNT_FIELDS }]}
@@ -144,9 +152,9 @@ export default function InvoiceDiscountComponent({
               renderFooter={renderFooter}
             />
 
-            <View style={{ padding: 20 }}>
-              <FormGuidelines points={["Make sure to set the discount"]} />
-            </View>
+            <FormGuidelines
+              points={["Make sure to set the discount"]}
+            />
           </View>
         </View>
       </Modal>

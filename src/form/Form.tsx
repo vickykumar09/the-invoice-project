@@ -14,26 +14,15 @@ import Picker from "./components/Picker";
 import Selector from "./components/Selector";
 import StepPicker from "./components/StepPicker";
 import TimePicker from "./components/TimePicker";
-import {
-  FieldRenderer,
-  FocusedField,
-  FormController,
-  FormSection,
-} from "./types";
+import { FocusedField, FormProps } from "./types";
 
-type Props<T> = {
-  initialData: T;
-  sections: FormSection<T>[];
-  fieldRenderer: FieldRenderer<T>;
-  renderFooter: (controller: FormController<T>) => React.ReactNode;
-};
 
 export default function Form<T extends object>({
   sections,
   initialData,
   fieldRenderer,
   renderFooter,
-}: Props<T>) {
+}: FormProps<T>) {
   const masterData = useMasterData();
   const [focused, setFocused] = useState<FocusedField<T>>(null);
 
@@ -220,15 +209,11 @@ export default function Form<T extends object>({
                   <View key={key} style={inputStyles.container}>
                     {/* Input Label */}
                     <View style={styles.labelContainer}>
-                      <Text
-                        style={[
-                          styles.labelText,
-                          focused === key && { color: rose[8] },
-                        ]}
-                      >
-                        {label}
-                        {constraints?.required && "*"}
-                      </Text>
+                      {label &&
+                        <Text style={[styles.labelText, focused === key && { color: rose[8] }]}>
+                          {label}{constraints?.required && "*"}
+                        </Text>
+                      }
                       {labelRight}
                     </View>
 
@@ -290,7 +275,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontFamily: "NunitoBold",
   },
-
   errorContainer: {
     flexDirection: "row",
     gap: 6,

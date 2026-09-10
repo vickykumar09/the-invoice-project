@@ -1,12 +1,6 @@
 import IconBtn from "@/components/IconBtn";
 import ActionBtn from "@/components/ui/buttons/ActionBtn";
-import {
-  amber,
-  gray,
-  green,
-  red,
-  rose
-} from "@/constants/color-palettes";
+import { amber, gray, green, red, rose } from "@/constants/color-palettes";
 import InvoiceCustomer from "@/features/invoices/components/invoice/Customer";
 import InvoiceInfo from "@/features/invoices/components/invoice/Info";
 import InvoiceItems from "@/features/invoices/components/invoice/Items";
@@ -27,7 +21,7 @@ import {
   deleteInvoiceItem,
   getInvoiceItems,
 } from "@/features/invoices/services/sqlite/item";
-import { InvoiceCustomerData } from "@/features/invoices/types/customer";
+import { InvoiceCustomerDisplay } from "@/features/invoices/types/customer";
 import { Invoice } from "@/features/invoices/types/invoice";
 import { InvoiceItem } from "@/features/invoices/types/item";
 import { calculateInvoiceSummary } from "@/features/invoices/utils/calculators/invoiceSummary";
@@ -78,7 +72,7 @@ export default function InvoiceIssueScreen() {
   const [view, setView] = useState<"review" | "items">("review");
 
   const [invoice, setInvoice] = useState<Invoice | null>(null);
-  const [customer, setCustomer] = useState<InvoiceCustomerData | null>(null);
+  const [customer, setCustomer] = useState<InvoiceCustomerDisplay | null>(null);
   const [invoiceItems, setInvoiceItems] = useState<InvoiceItem[]>([]);
 
   const loadData = async () => {
@@ -88,6 +82,7 @@ export default function InvoiceIssueScreen() {
         getInvoiceCustomer(invoiceId as string),
         getInvoiceItems(invoiceId as string),
       ]);
+      console.log(customerData);
 
       setInvoice(invoiceData);
       setCustomer(customerData);
@@ -181,6 +176,9 @@ export default function InvoiceIssueScreen() {
     confirmDelete("Invoice", deleteFn);
   };
 
+  const formData = customer
+    ? (({ invoice_id, created_at, updated_at, bill_to_state, ship_to_state, ...data }) => data)(customer)
+    : null;
   return (
     <>
       <Stack.Screen
@@ -188,10 +186,7 @@ export default function InvoiceIssueScreen() {
           headerTitle: `${INVOICE_TYPE_DETAILS[invoice?.invoice_type].title} (${invoice?.status})`,
         }}
       />
-      <SafeAreaView
-        edges={["bottom", "left", "right"]}
-        style={globalStyles.safeAreaView}
-      >
+      <SafeAreaView edges={["bottom", "left", "right"]} style={globalStyles.safeAreaView}>
         {/* Screen View - Invoice Review */}
         {view === "review" && (
           <View style={[styles.section, { backgroundColor: gray[0] }]}>
@@ -212,25 +207,14 @@ export default function InvoiceIssueScreen() {
                   <InvoiceCustomer data={customer} />
                   <InvoiceCustomerFormComponent
                     invoiceId={invoice.id}
-                    initialData={customer}
+                    initialData={formData}
                     onChange={loadData}
                   />
                 </View>
 
                 {/* Invoice Items */}
-                <View
-                  style={[
-                    styles.container,
-                    globalStyles.flex_items_center_spaced_between,
-                    { paddingVertical: 16 },
-                  ]}
-                >
-                  <Text style={styles.sectionHeaderTxt}>
-                    Items{" "}
-                    <Text style={{ color: gray[4] }}>
-                      [{invoiceItems.length}]
-                    </Text>
-                  </Text>
+                <View style={[styles.container, globalStyles.flex_items_center_spaced_between]}>
+                  <Text style={styles.sectionHeaderTxt}>Items [{invoiceItems.length}]</Text>
                   <IconBtn
                     icon={Feather}
                     name="chevron-right"
@@ -256,7 +240,9 @@ export default function InvoiceIssueScreen() {
 
                 {/* Invoice Summary */}
                 <View style={styles.container}>
-                  <InvoiceSummaryComponent summary={summary} />
+                  <InvoiceSummaryComponent
+                    summary={summary}
+                  />
                 </View>
 
                 {/* Btn - Generate Invoice */}
@@ -316,7 +302,10 @@ export default function InvoiceIssueScreen() {
                 onAddItem={(item) => handleAddInvoiceItem(item)}
               />
             </View>
-            <Button title="Back to Review" onPress={() => setView("review")} />
+            <Button
+              title="Back to Review"
+              onPress={() => setView("review")}
+            />
           </View>
         )}
       </SafeAreaView>

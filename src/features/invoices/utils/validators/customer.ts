@@ -5,7 +5,7 @@ export type CustomerValidationErrors = Partial<
 >;
 
 export function validateCustomer(
-  customer: InvoiceCustomerData
+  customer: InvoiceCustomerData,
 ): CustomerValidationErrors {
   const errors: CustomerValidationErrors = {};
 
@@ -19,23 +19,19 @@ export function validateCustomer(
   }
 
   if (!customer.bill_to_phone) {
-    errors.bill_to_phone = "Billing Phone is required."
+    errors.bill_to_phone = "Billing Phone is required.";
   }
 
-  if(!customer.bill_to_address_line1) {
-    errors.bill_to_address_line1 = "Bill To Address Line1 is required."
+  if (!customer.bill_to_address_line1) {
+    errors.bill_to_address_line1 = "Bill To Address Line1 is required.";
   }
 
-  if(!customer. bill_to_city) {
-    errors.bill_to_city = "Bill to city is required."
+  if (!customer.bill_to_city) {
+    errors.bill_to_city = "Bill to city is required.";
   }
 
-  if(!customer.bill_to_state_code) {
-    errors.bill_to_state_code = 'Bill to state code is required.'
-  }
-
-  if(!customer.is_shipping_same_as_billing) {
-    errors.is_shipping_same_as_billing = 'Is shipping same as boolean is required.'
+  if (!customer.bill_to_state_code) {
+    errors.bill_to_state_code = "Bill to state code is required.";
   }
 
   // Generated fields
@@ -47,9 +43,9 @@ export function validateCustomer(
     errors.updated_at = "Updated date is required.";
   }
 
-  if(!customer.is_synced) {
-    errors.is_synced = "Error with synced status."
-  }
+  // if(!customer.is_synced) {
+  //   errors.is_synced = "Error with synced status."
+  // }
 
   return errors;
 }

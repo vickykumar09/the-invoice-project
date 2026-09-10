@@ -1,7 +1,7 @@
 import IconBtn from "@/components/IconBtn";
 import { gray } from "@/constants/color-palettes";
 import { toDateString } from "@/utils/date-time/convert";
-import { formatDate } from "@/utils/date-time/format";
+import { formatDateString } from "@/utils/date-time/format";
 import { Ionicons } from "@expo/vector-icons";
 import DateTimePicker, {
   DateTimePickerEvent,
@@ -40,11 +40,11 @@ export default function DatePicker({
       <View style={styles.container}>
         <Text style={styles.valueText}>
           {value ? (
-            formatDate(new Date(value))
+            formatDateString(value)
           ) : (
             <Text
               style={{ color: gray[4] }}
-            >{`e.g. ${formatDate(new Date())}`}</Text>
+            >{`e.g. ${formatDateString(new Date().toISOString())}`}</Text>
           )}
         </Text>
 

@@ -1,11 +1,9 @@
 import { gray, rose } from "@/constants/color-palettes";
 import { StyleSheet, Text, View } from "react-native";
 
-type Props = {
-  text: string;
-};
-
-export default function ListFooter({ text }: Props) {
+export default function ListFooter({
+  text
+}: { text: string }) {
   return (
     <View style={styles.container}>
       <Text style={styles.footerTxt}>{text}</Text>
@@ -23,8 +21,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   footerTxt: {
-    fontSize: 16,
-    fontWeight: 600,
-    color: rose[5],
+    color: gray[5],
   },
 });

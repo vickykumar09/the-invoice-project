@@ -65,9 +65,7 @@ export default function InvoiceItems({ items, onDeleteItem }: Props) {
         ]}
       >
         <Text style={{ fontFamily: "NunitoBold", fontSize: 18 }}>Items</Text>
-        <Text style={{ fontFamily: "NunitoBold", fontSize: 18 }}>
-          {items.length}
-        </Text>
+        <Text style={{ fontFamily: "NunitoBold", fontSize: 18 }}>{items.length}</Text>
       </View>
 
       <FlatList
@@ -77,7 +75,7 @@ export default function InvoiceItems({ items, onDeleteItem }: Props) {
         showsVerticalScrollIndicator={false}
         data={items}
         renderItem={renderItem}
-        contentContainerStyle={{ backgroundColor: gray[1], gap: 2 }}
+        contentContainerStyle={{ gap: 2 }}
         ListEmptyComponent={renderEmpty}
       />
     </>

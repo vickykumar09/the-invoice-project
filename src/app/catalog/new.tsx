@@ -1,3 +1,4 @@
+import FormGuidelines from "@/components/common/FormGuidelines";
 import PageMessage from "@/components/common/PageMessage";
 import ActionBtn from "@/components/ui/buttons/ActionBtn";
 import { gray, rose } from "@/constants/color-palettes";
@@ -119,9 +120,8 @@ export default function NewCatalogItemScreen() {
             />
 
             {/* Form Guidelines */}
-            {/* <View style={styles.section}>
-              <ImportantPoints
-                header='Guidelines'
+            <View style={styles.section}>
+              <FormGuidelines
                 points={[
                   "Select the type that best describes your item.",
                   "Enter a clear name for the item, using 2-120 characters.",
@@ -129,10 +129,10 @@ export default function NewCatalogItemScreen() {
                   "Select the unit used to measure this item.",
                   "Select the rate type only if you know it. Otherwise, leave the field unselected.",
                   "Select the tax rate if you know it. Otherwise, leave the field unselected.",
-                  "Select the cess type if you know it. Otherwise, leave it unselected."
+                  "Select the cess type if you know it. Otherwise, leave it unselected.",
                 ]}
               />
-            </View> */}
+            </View>
           </View>
         </ScrollView>
       </SafeAreaView>

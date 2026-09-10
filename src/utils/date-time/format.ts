@@ -1,67 +1,55 @@
 /**
- * Utility functions for formatting Date into human-readable date strings.
+ * Formats a date string into a human-readable date and optionally includes time.
  *
- * - formatDate: Converts a Date into
- *   "DD Mon YYYY" format (e.g., "01 Jan 2025").
+ * @param dateString - A date string in either "YYYY-MM-DD" format or ISO format.
+ * @param withTime - Whether to include hours and minutes.
+ * @param withSecond - Whether to include seconds when time is included.
  *
- * - formatDateWithTime: Converts a timestamp into
- *   "DD Mon YYYY, hh:mm:ss AM/PM" format (e.g., "01 Jan 2025, 03:45:00 PM").
+ * @returns A formatted string in one of these formats:
+ * - "01 Jan 2026"
+ * - "01 Jan 2026, 09:20 AM"
+ * - "01 Jan 2026, 09:20:30 PM"
  *
- * Both functions use the `Intl.DateTimeFormat` API with 'en-GB' locale
- * to ensure consistent formatting across platforms.
+ * @remarks
+ * `withSecond` has an effect only when `withTime` is true.
  */
 
-// Format DateString to String (01 Jan 2025)
-export const formatDateString = (
+export function formatDateString(
   dateString: string,
   withTime: boolean = false,
   withSecond: boolean = false,
-) => {
-  const inputDate = new Date(dateString);
+): string {
+  let inputDate: Date;
+
+  if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
+    const [year, month, day] = dateString.split("-").map(Number);
+    inputDate = new Date(year, month - 1, day);
+  } else {
+    inputDate = new Date(dateString);
+  }
+
   const options: Intl.DateTimeFormatOptions = {
     day: "2-digit",
     month: "short",
     year: "numeric",
     hour: withTime ? "2-digit" : undefined,
     minute: withTime ? "2-digit" : undefined,
-    second: withSecond ? "2-digit" : undefined,
+    second: withTime && withSecond ? "2-digit" : undefined,
     hour12: true,
   };
 
   return inputDate
-    .toLocaleDateString("en-GB", options)
+    .toLocaleString("en-GB", options)
     .replace("am", "AM")
     .replace("pm", "PM");
-};
+}
 
-// Format Date to String
-export const formatDate = (date: Date) => {
-  const options: Intl.DateTimeFormatOptions = {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  };
-
-  return date.toLocaleDateString("en-GB", options);
-};
-
-// check if a date is past the current
-export const isSameDay = (d1: Date, d2: Date) =>
-  d1.toDateString() === d2.toDateString();
-
-// Get “time ago” (e.g., “5 min ago”) - comparing date with current date
-export const timeAgo = (date: Date) => {
-  const diff = (Date.now() - date.getTime()) / 1000;
-  if (diff < 60) return `${Math.floor(diff)}s ago`;
-  if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
-  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
-  return `${Math.floor(diff / 86400)}d ago`;
-};
-// Check if a date is in future to the current
-
-// check if same day
-// check if within  7 days
-// check if  after 7 days
+/**
+ *
+ * @param targetDateString
+ * @param currentSystemTime
+ * @returns
+ */
 
 export function getSmartTimestamp(
   targetDateString: string,
@@ -104,16 +92,11 @@ export function getSmartTimestamp(
 }
 
 /**
- * TIME utility functions.
  *
- * Provides helpers for:
- * - Formatting a 24-hour time string into a 12-hour AM/PM format.
- * - Converting a time string into a JavaScript Date object.
+ * @param date
+ * @returns
  */
 
-/**
- * Converts a Date object into a 24-hour time string (`HH:mm`).
- */
 export function dateToTime(date: Date): string {
   const hours = String(date.getHours()).padStart(2, "0");
   const minutes = String(date.getMinutes()).padStart(2, "0");

@@ -44,18 +44,8 @@ export default function InvoicesScreen() {
   const renderHeader = () => {
     return (
       <>
-        <View
-          style={[
-            {
-              padding: 20,
-              backgroundColor: "white",
-              gap: 20,
-              borderBottomWidth: 1,
-              borderBottomColor: gray[1],
-            },
-          ]}
-        >
-          <View style={{ flex: 1, gap: 8 }}>
+        <View style={styles.header}>
+          <View style={{ gap: 8 }}>
             <Text style={{ color: gray[9], fontSize: 16 }}>This Month</Text>
             <View
               style={{
@@ -91,14 +81,6 @@ export default function InvoicesScreen() {
               </View>
             </View>
           </View>
-          {/* <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 8}}>
-            <FontAwesome name="circle" size={8}/>
-            <FontAwesome name="circle" size={8}/>
-            <FontAwesome name="circle" size={8}/>
-            <FontAwesome name="circle" size={8}/>
-            <FontAwesome name="circle" size={8}/>
-            <FontAwesome name="circle" size={8}/>
-          </View> */}
         </View>
 
         <View
@@ -180,7 +162,9 @@ export default function InvoicesScreen() {
           ListHeaderComponent={renderHeader}
           ListFooterComponent={renderFooter}
           ListEmptyComponent={renderEmpty}
-          contentContainerStyle={{ gap: 0 }}
+          contentContainerStyle={
+            recentInvoices.length <= 0 && { flex: 1, backgroundColor: "white" }
+          }
           onEndReached={hasMore ? loadMore : undefined}
           onEndReachedThreshold={0.5}
         />
@@ -207,11 +191,10 @@ export default function InvoicesScreen() {
 
 const styles = StyleSheet.create({
   header: {
-    paddingHorizontal: 20,
-    paddingVertical: 30,
-    backgroundColor: "white",
+    padding: 20,
     borderBottomWidth: 1,
     borderBottomColor: gray[1],
+    backgroundColor: "white",
   },
   labelTxt: {
     fontSize: 20,
@@ -232,36 +215,5 @@ const styles = StyleSheet.create({
   listHeaderTxt: {
     fontSize: 18,
     fontWeight: 600,
-  },
-  listFooter: {
-    paddingTop: 16,
-    padding: 20,
-    alignItems: "center",
-  },
-  listFooterTxt: {
-    fontSize: 16,
-    fontWeight: 600,
-    color: gray[5],
-  },
-  listEmpty: {
-    padding: 20,
-    paddingVertical: 40,
-    alignItems: "center",
-  },
-  emptyIconWrapper: {
-    padding: 12,
-    borderRadius: 12,
-    backgroundColor: gray[1],
-  },
-  listEmptyTitleTxt: {
-    fontSize: 18,
-    fontWeight: 600,
-    color: gray[7],
-  },
-  listEmptySubtitleTxt: {
-    marginTop: 16,
-    fontSize: 16,
-    textAlign: "center",
-    color: gray[5],
   },
 });

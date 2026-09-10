@@ -1,4 +1,5 @@
 import { gray, rose } from "@/constants/color-palettes";
+import globalStyles from "@/styles/globalStyles";
 import { StyleSheet, Switch, Text, View } from "react-native";
 
 type Props = {
@@ -14,17 +15,15 @@ export default function AppSwitch({
   value,
   onChange,
 }: Props) {
-  const isEnabled = value === "true";
+  
+  const isEnabled = value === 'true';
 
   return (
-    <View style={styles.container}>
+    <View style={globalStyles.flex_items_center_spaced_between}>
       <Text
-        style={[
-          styles.descriptionTxt,
-          isEnabled ? styles.descriptionActive : styles.descriptionInactive,
-        ]}
         numberOfLines={1}
         ellipsizeMode="tail"
+        style={[styles.descriptionTxt, isEnabled ? styles.descriptionActive : styles.descriptionInactive]}
       >
         {description}
       </Text>

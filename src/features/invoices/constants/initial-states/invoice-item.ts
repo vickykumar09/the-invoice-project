@@ -1,5 +1,5 @@
 import { businessInfo } from "@/constants/business";
-import { InvoiceItem } from "../../types";
+import { InvoiceItem } from "../../types/item";
 
 export const INITIAL_INVOICE_ITEM_STATE: InvoiceItem = {
   id: '',
