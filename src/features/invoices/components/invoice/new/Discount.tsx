@@ -8,7 +8,7 @@ import { Alert, Modal, ScrollView, StyleSheet, Text, View } from "react-native";
 import FormGuidelines from "@/components/common/FormGuidelines";
 import TextLink from "@/components/ui/TextLink";
 import { itemFieldRenderer } from "@/features/catalog/constants/ItemFormRenderer";
-import { INVOICE_DISCOUNT_FIELDS } from "@/features/invoices/constants/form-fields/discount";
+import { INVOICE_DISCOUNT_FIELDS } from "@/features/invoices/constants/form-fields/adjustments";
 import { updateInvoiceDiscount } from "@/features/invoices/services/sqlite/adjustments";
 import { InvoiceDiscount } from "@/features/invoices/types/invoice";
 import { toInvoiceDiscountInsert } from "@/features/invoices/utils/mappers";

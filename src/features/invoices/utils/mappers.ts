@@ -1,8 +1,8 @@
 import { normalizeBooleanString } from "@/form/utils/normalize";
 import { FormValues } from "@/form/types";
-import { InvoiceDiscount, InvoiceInfoProps,  } from "../types/invoice";
+import { InvoiceDiscount, InvoiceInfoProps, InvoiceRoundOff, InvoiceRoundOffMode,  } from "../types/invoice";
 import { InvoiceCustomerForm } from "../types/customer";
-import { toValueType } from "./converter";
+import { toRoundOffMode, toValueType } from "./converter";
 import { toPaise } from "@/utils/money/convert";
 
 export function toInvoiceInsert(
@@ -67,6 +67,21 @@ export function toInvoiceDiscountInsert(
     invoice_discount_type: toValueType(invoice_discount_type),
     invoice_discount_value: Number(invoice_discount_value),
     invoice_discount_amount: toPaise(Number(invoice_discount_amount))
+  }
+
+  return res;
+}
+
+// Convert the invoice round off form values into the database type to be ready for insert
+export function toInvoiceRoundOffInsert(
+  data: FormValues<InvoiceRoundOff>
+): InvoiceRoundOff {
+  const {
+    round_off_mode
+  } = data
+
+  const res = {
+    round_off_mode: toRoundOffMode(round_off_mode)
   }
 
   return res;

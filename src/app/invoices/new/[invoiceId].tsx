@@ -9,7 +9,7 @@ import InvoiceSummaryComponent from "@/features/invoices/components/invoice/Summ
 import InvoiceCustomerFormComponent from "@/features/invoices/components/invoice/new/Customer";
 import InvoiceDiscountComponent from "@/features/invoices/components/invoice/new/Discount";
 import InvoiceItemComponent from "@/features/invoices/components/invoice/new/Item";
-import InvoiceRoundOffComponent from "@/features/invoices/components/invoice/new/Roundoff";
+import InvoiceRoundOffComponent from "@/features/invoices/components/invoice/new/RoundOff";
 import { INVOICE_TYPE_DETAILS } from "@/features/invoices/constants/invoice-types";
 import { getInvoiceCustomer } from "@/features/invoices/services/sqlite/customer";
 import {

@@ -1,4 +1,5 @@
 import { ValueType } from "@/types/shared";
+import { InvoiceRoundOffMode } from "../types/invoice";
 
 /**
  * 
@@ -9,9 +10,15 @@ import { ValueType } from "@/types/shared";
 export function toValueType(
   value: string
 ): ValueType | null {
-  if (value === "fixed" || value === "percentage") {
-    return value;
-  }
+  if (value === "fixed" || value === "percentage") return value;
 
+  return null;
+}
+
+export function toRoundOffMode(
+  value: string
+): InvoiceRoundOffMode | null {
+  if(value === 'up' || value === 'down') return value;
+  
   return null;
 }

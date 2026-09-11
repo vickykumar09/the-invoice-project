@@ -61,9 +61,8 @@ export const INVOICE_SCHEMA = `
     cess_total INTEGER NOT NULL DEFAULT 0,
     tax_total INTEGER NOT NULL DEFAULT 0,
 
-    round_off_mode TEXT NOT NULL DEFAULT 'none'
+    round_off_mode TEXT
       CHECK(round_off_mode IN (
-        'none',
         'up',
         'down'
       )),

@@ -7,7 +7,6 @@ export type InvoiceType =
   | 'exempt'
 
 export type InvoiceRoundOffMode = 
-  | 'none'
   | 'up'
   | 'down'
 
@@ -104,7 +103,7 @@ export type Invoice = {
   cess_total: number;
   tax_total: number;
   
-  round_off_mode: InvoiceRoundOffMode;
+  round_off_mode: InvoiceRoundOffMode | null;
   round_off_amount: number;
 
   grand_total: number;

@@ -1,4 +1,4 @@
-
+import { InvoiceRoundOffMode } from "../../types/invoice";
 
 /**
  * Calculates the invoice grand total after applying the selected round-off mode.
@@ -7,8 +7,6 @@
  * @param roundOffMode Selected round-off mode.
  * @returns The rounded grand total and round-off amount in paise.
  */
-
-import { InvoiceRoundOffMode } from "../../types/invoice";
 
 export function calculateInvoiceRoundOff(
   preRoundTotalPaise: number,
@@ -21,24 +19,24 @@ export function calculateInvoiceRoundOff(
   const remainder = preRoundTotalPaise % 100;
   let grandTotalPaise = preRoundTotalPaise;
 
-  switch (roundOffMode) {
-    case 'none':
-      break;
-
-    case 'down':
-      grandTotalPaise -= remainder;
-      break;
-
-    case 'up':
-      if (remainder !== 0) {
-        grandTotalPaise += (100 - remainder);
+  if(roundOffMode) {
+    switch (roundOffMode) {
+      case 'down':
+        grandTotalPaise -= remainder;
+        break;
+  
+      case 'up':
+        if (remainder !== 0) {
+          grandTotalPaise += (100 - remainder);
+        }
+        break;
+      
+      default: {
+        throw new Error(`Unsupported round off mode: ${roundOffMode}`);
       }
-      break;
-    
-    default: {
-      throw new Error(`Unsupported round off mode: ${roundOffMode}`);
     }
   }
+
 
   const roundOffAmountPaise = Math.abs(grandTotalPaise - preRoundTotalPaise);
 
