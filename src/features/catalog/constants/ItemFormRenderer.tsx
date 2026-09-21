@@ -19,5 +19,12 @@ export const itemFieldRenderer: FieldRenderer<ItemForm> = (
     }
   }
 
+  if(key === "discount_value") {
+    return {
+      prefix: data.discount_type === 'fixed' && <FontAwesome5 name='rupee-sign' style={{marginTop: 3}} size={14} />,
+      suffix: data.discount_type === 'percentage' && <FontAwesome5 name='percent' style={{marginTop: 3}} size={14} />,
+    }
+  }
+
   return {};
 }

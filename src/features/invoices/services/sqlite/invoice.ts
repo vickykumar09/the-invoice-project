@@ -2,7 +2,6 @@ import { getDB } from "@/libs/db/database";
 import * as Crypto from "expo-crypto";
 import { businessInfo } from "@/constants/business";
 import { calculateInvoiceSummary } from "../../utils/calculators/invoiceSummary";
-import { getInvoiceItemsForInvoice } from "./item";
 import { Result } from "@/types/shared";
 import { validateInvoice } from "../../utils/validators/invoice";
 import { FetchFnParams } from "@/hooks/usePagination";
@@ -42,7 +41,7 @@ export const createInvoice = async (
       success: false,
       error: {
         code: "VALIDATION_ERROR",
-        message: "Invalid catalog item.",
+        message: "Invalid invoice.",
         fields: errors,
       },
     };
@@ -66,7 +65,7 @@ export const createInvoice = async (
 
     return {
       success: true,
-      data: invoice,
+      data: invoice
     };
   } catch (error) {
     console.log(error);
@@ -74,7 +73,7 @@ export const createInvoice = async (
       success: false,
       error: {
         code: "DATABASE_ERROR",
-        message: "Failed to create catalog item.",
+        message: "Failed to create invoice.",
       },
     };
   }

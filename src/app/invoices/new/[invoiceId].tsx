@@ -12,38 +12,19 @@ import InvoiceItemComponent from "@/features/invoices/components/invoice/new/Ite
 import InvoiceRoundOffComponent from "@/features/invoices/components/invoice/new/RoundOff";
 import { INVOICE_TYPE_DETAILS } from "@/features/invoices/constants/invoice-types";
 import { getInvoiceCustomer } from "@/features/invoices/services/sqlite/customer";
-import {
-  deleteInvoice,
-  getInvoice,
-  issueInvoice,
-} from "@/features/invoices/services/sqlite/invoice";
-import {
-  deleteInvoiceItem,
-  getInvoiceItems,
-} from "@/features/invoices/services/sqlite/item";
+import { deleteInvoice, getInvoice, issueInvoice } from "@/features/invoices/services/sqlite/invoice";
+import { deleteInvoiceItem, getInvoiceItems } from "@/features/invoices/services/sqlite/item";
 import { InvoiceCustomerDisplay } from "@/features/invoices/types/customer";
 import { Invoice } from "@/features/invoices/types/invoice";
 import { InvoiceItem } from "@/features/invoices/types/item";
 import { calculateInvoiceSummary } from "@/features/invoices/utils/calculators/invoiceSummary";
-import {
-  mapInvoiceToDiscount,
-  mapInvoiceToInfo,
-  mapInvoiceToRoundoff,
-} from "@/features/invoices/utils/mappers/invoice-mapper";
+import { mapInvoiceToDiscount, mapInvoiceToInfo, mapInvoiceToRoundoff } from "@/features/invoices/utils/mappers/invoice-mapper";
 import globalStyles from "@/styles/globalStyles";
 import { confirmDelete, showError, showSuccess } from "@/utils/alerts";
 import { Feather } from "@expo/vector-icons";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import {
-  ActivityIndicator,
-  Alert,
-  Button,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { ActivityIndicator, Alert, Button, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 // Check Invoice Id existence
@@ -122,15 +103,17 @@ export default function InvoiceIssueScreen() {
   // Handles issuing the current draft invoice.
   const handleIssueInvoice = async () => {
     if (!invoiceId) {
-      Alert.alert("Delete failed!", "Invoice ID is missing.");
+      Alert.alert('Issue Failed!', 'Invoice ID is missing. Please try again.');
+      return;
+    }
+
+    if(!customer) {
+      Alert.alert("Issue Failed!", "Please add customer details before issuing the invoice.");
       return;
     }
 
     if (invoiceItems.length === 0) {
-      Alert.alert(
-        "Cannot issue invoice",
-        "Add at least one item before issuing the invoice.",
-      );
+      Alert.alert("Issue Failed!", "Please add at least one item before issuing the invoice.");
       return;
     }
 
@@ -141,8 +124,9 @@ export default function InvoiceIssueScreen() {
         return;
       }
 
-      showSuccess("Invoice issued successfully.", () =>
-        router.replace(`/invoices/${result.data.id}`),
+      showSuccess(
+        "Invoice issued successfully.", 
+        () => router.replace(`/invoices/${result.data.id}`)
       );
     } catch (e) {
       console.log(e);
@@ -154,7 +138,7 @@ export default function InvoiceIssueScreen() {
   const handleInvoiceDelete = () => {
     const deleteFn = async () => {
       if (!invoiceId) {
-        Alert.alert("Delete failed!", "Invoice ID is missing.");
+        Alert.alert("Delete failed!", "Invoice ID is missing. Please try again.");
         return;
       }
 
@@ -179,6 +163,7 @@ export default function InvoiceIssueScreen() {
   const formData = customer
     ? (({ invoice_id, created_at, updated_at, bill_to_state, ship_to_state, ...data }) => data)(customer)
     : null;
+
   return (
     <>
       <Stack.Screen
@@ -204,7 +189,9 @@ export default function InvoiceIssueScreen() {
 
                 {/* Invoice Customer */}
                 <View style={styles.container}>
-                  <InvoiceCustomer data={customer} />
+                  <InvoiceCustomer
+                    data={customer}
+                  />
                   <InvoiceCustomerFormComponent
                     invoiceId={invoice.id}
                     initialData={formData}
@@ -233,7 +220,7 @@ export default function InvoiceIssueScreen() {
                   <InvoiceRoundOffComponent
                     invoiceId={invoice.id}
                     initialData={roundOff}
-                    preRoundOffTotalInPaise={200090}
+                    preRoundOffTotalInPaise={summary.preRoundTotalPaise}
                     onChange={loadData}
                   />
                 </View>

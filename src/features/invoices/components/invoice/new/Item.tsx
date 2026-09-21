@@ -15,14 +15,12 @@ import { confirmDiscard } from "@/utils/alerts";
 import { fromPaise } from "@/utils/money/convert";
 import { formatCurrency } from "@/utils/money/format";
 import { Feather } from "@expo/vector-icons";
-import { Modal, ScrollView, StyleSheet, Text, View } from "react-native";
-import {
-  INVOICE_ITEM_FORM_FIELDS,
-  INVOICE_ITEM_TAX_FORM_FIELDS,
-} from "../../../constants/form-fields/item";
+import { Alert, Modal, ScrollView, StyleSheet, Text, View } from "react-native";
+import { INVOICE_ITEM_DISCOUNT_FIELDS, INVOICE_ITEM_FORM_FIELDS, INVOICE_ITEM_TAX_FORM_FIELDS } from "../../../constants/form-fields/item";
 import { INITIAL_INVOICE_ITEM_STATE } from "../../../constants/initial-states/invoice-item";
 import IconBtn from "@/components/IconBtn";
 import ActionBtn from "@/components/ui/buttons/ActionBtn";
+import { insertInvoiceItem } from "@/features/invoices/services/sqlite/item";
 
 type Props = {
   invoice_id: string;
@@ -42,7 +40,10 @@ export default function InvoiceItemComponent({
   // Form Sections
   const formSections = [
     { title: "Basic Details", fields: INVOICE_ITEM_FORM_FIELDS },
-    { title: "Tax Details", fields: INVOICE_ITEM_TAX_FORM_FIELDS },
+    { title: "Discount Details", fields: INVOICE_ITEM_DISCOUNT_FIELDS },
+    ...(invoice_type === 'taxable'
+      ? [{ title: "Tax Details", fields: INVOICE_ITEM_TAX_FORM_FIELDS }]
+      : [])
   ];
 
   // Render Footer
@@ -51,6 +52,8 @@ export default function InvoiceItemComponent({
     setErrors
   }: FormController<InvoiceItem>) => {
     const {
+      quantity,
+      rate,
       amount,
       discount_amount,
       taxable_amount,
@@ -61,15 +64,44 @@ export default function InvoiceItemComponent({
       total_amount,
     } = calculateInvoiceItemSummary(data);
 
-    const itemsSummary = [
-      { title: "Amount", value: amount },
-      { title: "Discount", value: discount_amount },
-      { title: "Taxable Value", value: taxable_amount },
-      { title: "CGST", value: cgst_amount },
-      { title: "SGST", value: sgst_amount },
-      { title: "IGST", value: igst_amount },
-      { title: "CESS", value: cess_amount },
-    ];
+    const getItemSummary = () => {
+      if (invoice_type === 'none') {
+        return [
+          { label: 'Amount', value: amount },
+          { label: 'Discount', value: discount_amount }
+        ];
+      }
+
+      if (invoice_type === 'exempt') {
+        return [
+          { label: 'Amount', value: amount },
+          { label: 'Discount', value: discount_amount },
+          { label: 'Exempt Value', value: amount }
+        ];
+      }
+
+      return [
+        { label: 'Amount', value: quantity * rate },
+
+        ...(data.rate_type === 'inclusive'
+          ? [{ label: 'Amount (Excl. Tax)', value: amount }]
+          : []),
+
+        { label: 'Discount', value: discount_amount },
+        { label: 'Taxable Value', value: taxable_amount },
+
+        ...(is_igst
+          ? [{ label: 'IGST', value: igst_amount }]
+          : [
+              { label: 'CGST', value: cgst_amount },
+              { label: 'SGST', value: sgst_amount },
+            ]),
+
+        ...(cess_amount > 0
+          ? [{ label: 'Cess', value: cess_amount }]
+          : []),
+      ];
+    };
 
     return (
       <View style={{gap: 12}}>
@@ -86,12 +118,12 @@ export default function InvoiceItemComponent({
             </Text>
           </View>
           <View style={{ gap: 8, paddingHorizontal: 12 }}>
-            {itemsSummary.map((each) => {
-              const { title, value } = each;
+            {getItemSummary().map((each) => {
+              const { label, value } = each;
               return (
-                <View key={title}>
+                <View key={label}>
                   <View style={globalStyles.flex_items_center_spaced_between}>
-                    <Text style={styles.titleTxt}>{title}</Text>
+                    <Text style={styles.titleTxt}>{label}</Text>
                     <Text style={styles.valueTxt}>{formatCurrency(fromPaise(value))}</Text>
                   </View>
                 </View>
@@ -131,7 +163,7 @@ export default function InvoiceItemComponent({
             btnLabel="ADD"
             rippleColor={rose[0]}
             color={rose[8]}
-            onPress={() => console.log('helo')}
+            onPress={() => handleSubmit(data)}
           />
         </View>
       </View>
@@ -139,23 +171,23 @@ export default function InvoiceItemComponent({
   };
 
   // Handle Invoice Item Addition
-  // const handleSubmit = async () => {
+  const handleSubmit = async (data) => {
 
-  //   const res = await insertInvoiceItem(INVOICE_ITEM_FORM_FIELDS, invoice_id, is_igst, invoice_pricing_mode, data);
-  //   if (!res.success) {
-  //     if (res.error.code === "VALIDATION_ERROR") {
-  //       setErrors(res.error.fields ?? {});
-  //     }
+    const res = await insertInvoiceItem(data, invoice_id);
+    if (!res.success) {
+      // if (res.error.code === "VALIDATION_ERROR") {
+      //   setErrors(res.error.fields ?? {});
+      // }
 
-  //     Alert.alert(res.error.message);
-  //     return;
-  //   }
+      Alert.alert(res.error.message);
+      return;
+    }
 
-  //   Alert.alert('success')
+    Alert.alert('success')
 
-  //   onAddItem(data);
-  //   closeModal();
-  // }
+    onAddItem(data);
+    closeModal();
+  }
 
   return (
     <>
@@ -172,6 +204,7 @@ export default function InvoiceItemComponent({
         transparent
         statusBarTranslucent
         animationType="fade"
+        onRequestClose={() => confirmDiscard(closeModal)}
       >
         <View style={modalStyle.overlay}>
           <View style={modalStyle.container}>
@@ -187,10 +220,7 @@ export default function InvoiceItemComponent({
               style={{ backgroundColor: gray[0] }}
             >
               <View style={{ gap: 12 }}>
-                <PageMessage
-                  message="This item will be added only to the current invoice and will not be saved to your catalog items."
-                  withQuotes={true}
-                />
+                <Text style={{padding: 20, backgroundColor: 'white', textAlign: "center"}}>"This item will be added only to the current invoice and will not be saved to your catalog items."</Text>
 
                 <Form<InvoiceItem>
                   initialData={INITIAL_INVOICE_ITEM_STATE}

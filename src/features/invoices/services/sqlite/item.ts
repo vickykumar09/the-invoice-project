@@ -4,48 +4,27 @@ import { businessInfo } from "@/constants/business";
 import { calculateInvoiceItemSummary } from "../../utils/calculators/invoiceItemSummary";
 import { InvoiceItem, NewInvoiceItem } from "../../types/item";
 import { Result } from "@/types/shared";
+import { validateInvoiceItem } from "../../utils/validators/item";
+import { toPaise } from "@/utils/money/convert";
 
 
 // Insert Invoice Item to an invoice
 export const insertInvoiceItem = async (
   insertData: NewInvoiceItem,
-  invoiceId: string,
-  is_igst: boolean,
+  invoiceId: string
 ): Promise<Result<InvoiceItem>> => {
   // 1. Calculate Values
   const now = new Date().toISOString();
-  
-  const {
-    quantity,
-    rate,
-    discount_type,
-    discount_value,
-    tax_rate,
-    cess_type,
-    cess_value
-  } = insertData
-
-  const summary = calculateInvoiceItemSummary({
-    is_igst,
-    quantity,
-    rate,
-    discount_type,
-    discount_value,
-    tax_rate,
-    cess_type,
-    cess_value
-  })
-
 
   // 2. Generate Insert Item Object
   const invoiceItem: InvoiceItem = {
     ...insertData,
-    ...summary,
 
     // System Generated Fields
     id: Crypto.randomUUID(),
     business_id: businessInfo.code,
     invoice_id: invoiceId,
+    rate: toPaise(insertData.rate),
 
     // System Generated
     created_at: now,
@@ -53,10 +32,20 @@ export const insertInvoiceItem = async (
     is_synced: false,
   };
 
-
-  // 3. Validate Insert Item Object
-  const errors = validateInvoiceItem(item);
+  // 3. Validate Insert Invoice Item Object
+  const errors = validateInvoiceItem(invoiceItem);
   console.log(errors)
+
+  if (Object.keys(errors).length > 0) {
+    return {
+      success: false,
+      error: {
+        code: "VALIDATION_ERROR",
+        message: "Invalid invoice item.",
+        fields: errors,
+      },
+    };
+  }
 
   // 4. DB operation
   const columns = Object.keys(invoiceItem);
@@ -73,17 +62,19 @@ export const insertInvoiceItem = async (
       `,
       values
     )
+
     return {
       success: true, 
       data: invoiceItem 
-    };
+    }
+
   } catch (error) {
     console.log(error)
     return { 
       success: false, 
       error: {
         code: "DATABASE_ERROR",
-        message: "Failed to create invoice."
+        message: "Failed to add invoice item."
       }
     };
   }
@@ -93,7 +84,7 @@ export const updateInvoiceItem = async () => {
 
 }
 
-// // Update Invoice items on invoice isssuing
+// Update Invoice items on invoice isssuing
 // export const updateInvoiceItems = async () => {
 //   const items = []
 //   // calculate invoice discount allocation  - pass subtotal, item summary
@@ -140,6 +131,7 @@ export const updateInvoiceItem = async () => {
 //   // updated at
 // }
 
+
 // Delete Invoice Item
 export const deleteInvoiceItem = async (invoiceItemId: string, invoiceId: string) => {
   try {
@@ -167,8 +159,13 @@ export const getInvoiceItems = async (
     const db = await getDB();
     const res = db.getAllAsync<InvoiceItem>(
       `
-      SELECT *
-      FROM invoice_items
+      SELECT 
+        i.*,
+        mu.name AS measure_unit_name,
+        mu.symbol AS measure_unit_symbol
+      FROM invoice_items i
+      LEFT JOIN measure_units mu
+        ON mu.id = i.measure_unit_id
       WHERE invoice_id = ?
       `,
       [invoiceId]

@@ -6,18 +6,16 @@ export const INITIAL_INVOICE_ITEM_STATE: InvoiceItem = {
   business_id: businessInfo.code,
   invoice_id: '',
 
-  item_id: null,
   name: '',
   description: '',
   quantity: 1,
-  measure_unit: '',
+  measure_unit_id: 0,
   rate: 0,
 
   discount_type: 'percentage',
   discount_value: 0,
   discount_amount: 0,
   
-  hsn_sac_code: null,
   tax_rate: 0,
   cgst_amount: 0,
   sgst_amount: 0,

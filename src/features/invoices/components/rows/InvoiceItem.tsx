@@ -3,13 +3,21 @@ import globalStyles from "@/styles/globalStyles";
 import { fromPaise } from "@/utils/money/convert";
 import { StyleSheet, Text, View } from "react-native";
 import { InvoiceItem } from "../../types/item";
+import { calculateInvoiceItemSummary } from "../../utils/calculators/invoiceItemSummary";
 
 type InvoiceItemRowProps = {
   item: InvoiceItem;
   selected?: boolean;
 };
 
-export function InvoiceItemRow({ item, selected }: InvoiceItemRowProps) {
+export function InvoiceItemRow({
+  item,
+  selected
+}: InvoiceItemRowProps) {
+  const {
+    amount
+  } = calculateInvoiceItemSummary(item) 
+
   return (
     <View
       style={[
@@ -41,14 +49,14 @@ export function InvoiceItemRow({ item, selected }: InvoiceItemRowProps) {
             {item.name}
           </Text>
           <Text style={{ color: purple[9], fontWeight: 600, fontSize: 16 }}>
-            ₹{fromPaise(item.total_amount).toFixed(2)}
+            {fromPaise(amount)}
           </Text>
         </View>
 
         {/* Bottom Row */}
         <View style={[globalStyles.flex_items_center_spaced_between]}>
           <Text style={{ color: gray[5] }}>
-            {item.quantity} {item.measure_unit}
+            {item.quantity} {item.measure_unit_symbol} {item.measure_unit_name}
           </Text>
           <Text style={{ color: gray[7] }}>
             ₹{fromPaise(item.rate).toFixed(2)}

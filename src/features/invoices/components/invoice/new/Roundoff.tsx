@@ -4,7 +4,6 @@ import TextLink from "@/components/ui/TextLink";
 import { gray, green, red, rose } from "@/constants/color-palettes";
 import { itemFieldRenderer } from "@/features/catalog/constants/ItemFormRenderer";
 import { INVOICE_ROUND_OFF_FIELDS } from "@/features/invoices/constants/form-fields/adjustments";
-import { ROUND_OFF_MODES } from "@/features/invoices/constants/options/round-off-modes";
 import { updateInvoiceRoundOff } from "@/features/invoices/services/sqlite/adjustments";
 import { InvoiceRoundOff, InvoiceRoundOffMode } from "@/features/invoices/types/invoice";
 import { calculateInvoiceRoundOff } from "@/features/invoices/utils/calculators/invoiceRoundOff";

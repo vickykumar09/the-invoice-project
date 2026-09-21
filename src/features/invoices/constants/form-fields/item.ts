@@ -1,7 +1,5 @@
 import { FormField } from "@/form/types";
-import { NewInvoiceItem } from "../../types/item";
-
-
+import { NewInvoiceItem } from "../../types/item"
 
 export const INVOICE_ITEM_FORM_FIELDS: FormField<NewInvoiceItem>[] = [
   {
@@ -107,7 +105,11 @@ export const INVOICE_ITEM_FORM_FIELDS: FormField<NewInvoiceItem>[] = [
       maxValue: 99999.99,
     }
   },
-  { 
+] as const;
+
+// Invoice Item Discount Fields
+export const INVOICE_ITEM_DISCOUNT_FIELDS: FormField<NewInvoiceItem>[] = [
+  {
     key: 'discount_type',
     label: 'Discount Type',
 
@@ -142,7 +144,7 @@ export const INVOICE_ITEM_FORM_FIELDS: FormField<NewInvoiceItem>[] = [
     // if discount type  is percentage then min is 0.00 and max is 99.99
     // if discount type  is fixed then 0 ≤ Discount ≤ Amount
   },
-] as const;
+]
 
 
 // Invoice Item Tax Fields

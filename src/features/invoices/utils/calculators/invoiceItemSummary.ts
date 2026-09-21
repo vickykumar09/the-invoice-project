@@ -131,7 +131,7 @@ export function calculateInvoiceItemSummary({
 
   return {
     quantity: qty,
-    rate: ratePaise,
+    rate: originalRatePaise,
     amount,
     discount_amount,
     taxable_amount,

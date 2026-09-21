@@ -113,7 +113,7 @@ export function calculateInvoiceSummary (
 
     round_off_mode: round_off_mode,
     round_off_amount: roundOffAmountPaise,
-
+    preRoundTotalPaise: preRoundTotalPaise,
     grand_total: grandTotalPaise,
   };
 }

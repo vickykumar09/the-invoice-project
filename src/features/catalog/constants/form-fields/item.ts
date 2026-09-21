@@ -1,5 +1,6 @@
 import { FormField } from "@/form/types";
 import { ItemForm } from "../../types";
+import { NewInvoiceItem } from "@/features/invoices/types/item";
 
 export const ITEM_FORM_FIELDS: FormField<ItemForm>[] = [
   {
@@ -118,6 +119,46 @@ export const ITEM_FORM_FIELDS: FormField<ItemForm>[] = [
   },
 ] as const;
 
+// Item Discount Fields
+export const ITEM_DISCOUNT_FIELDS: FormField<NewInvoiceItem>[] = [
+  {
+    key: 'discount_type',
+    label: 'Discount Type',
+
+    type: 'Selector',
+    props: {
+      options: [
+        { id: 1, label: 'Percentage', value: 'percentage' },
+        { id: 2, label: 'Fixed', value: 'fixed' },
+      ]
+    },
+    constraints: {
+      type: 'string',
+      required: false,
+    }
+  },
+  { 
+    key: 'discount_value',
+    label: 'Discount Value',
+
+    type: 'TextInput',
+    props: {
+      placeholder: '20.00',
+    },
+
+    constraints: {
+      type: 'decimal',
+      required: false,
+      minLength: 1,
+      maxLength: 8,
+      minValue: 0,
+    }
+    // if discount type  is percentage then min is 0.00 and max is 99.99
+    // if discount type  is fixed then 0 ≤ Discount ≤ Amount
+  },
+]
+
+// Item Tax Fields
 export const ITEM_TAX_FORM_FIELDS: FormField<ItemForm>[] = [
   {
     key: 'hsn_sac_code',
