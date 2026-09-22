@@ -128,17 +128,18 @@ export function calculateInvoiceItemSummary({
     total_amount = taxable_amount + cgst_amount + sgst_amount + igst_amount + cess_amount
   }
 
-
   return {
     quantity: qty,
     rate: originalRatePaise,
+    rate_type,
     amount,
     discount_amount,
     taxable_amount,
+    tax_rate: taxRate,
     cgst_amount,
     sgst_amount,
     igst_amount,
     cess_amount,
-    total_amount,
+    total_amount
   };
 } 

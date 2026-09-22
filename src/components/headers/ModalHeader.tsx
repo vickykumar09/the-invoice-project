@@ -12,7 +12,7 @@ export default function ModalHeader({
 }) {
   return (
     <View style={styles.container}>
-      <Text style={[styles.headerLabel]}>{header}</Text>
+      <Text style={[styles.headerLabel]} numberOfLines={1}>{header}</Text>
       <IconBtn icon={FontAwesome} name="close" onPress={onPress} />
     </View>
   );

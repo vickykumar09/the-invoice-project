@@ -13,7 +13,7 @@ import InvoiceRoundOffComponent from "@/features/invoices/components/invoice/new
 import { INVOICE_TYPE_DETAILS } from "@/features/invoices/constants/invoice-types";
 import { getInvoiceCustomer } from "@/features/invoices/services/sqlite/customer";
 import { deleteInvoice, getInvoice, issueInvoice } from "@/features/invoices/services/sqlite/invoice";
-import { deleteInvoiceItem, getInvoiceItems } from "@/features/invoices/services/sqlite/item";
+import { getInvoiceItems } from "@/features/invoices/services/sqlite/item";
 import { InvoiceCustomerDisplay } from "@/features/invoices/types/customer";
 import { Invoice } from "@/features/invoices/types/invoice";
 import { InvoiceItem } from "@/features/invoices/types/item";
@@ -95,8 +95,7 @@ export default function InvoiceIssueScreen() {
   };
 
   // Handle Invoice Item Deletion
-  const handleDeleteInvoiceItem = async (itemId: string) => {
-    await deleteInvoiceItem(itemId, invoiceId as string);
+  const handleInvoiceItemDelete = (itemId: string) => {
     setInvoiceItems((prev) => prev.filter((item) => item.id !== itemId));
   };
 
@@ -278,8 +277,12 @@ export default function InvoiceIssueScreen() {
         {view === "items" && (
           <View style={[styles.section]}>
             <InvoiceItems
+              invoice_id={invoice.id}
+              invoice_status={invoice.status}
+              invoice_type={invoice.invoice_type}
+              is_igst={invoice.is_igst}
               items={invoiceItems}
-              onDeleteItem={(itemId) => handleDeleteInvoiceItem(itemId)}
+              onDeleteItem={(itemId) => handleInvoiceItemDelete(itemId)}
             />
             <View style={styles.invoiceItemComponentContainer}>
               <InvoiceItemComponent

@@ -133,21 +133,46 @@ export const updateInvoiceItem = async () => {
 
 
 // Delete Invoice Item
-export const deleteInvoiceItem = async (invoiceItemId: string, invoiceId: string) => {
+export const deleteInvoiceItem = async (
+  invoiceItemId: string,
+  invoiceId: string
+) => {
   try {
     const db = await getDB();
-    db.runAsync(
+    const res = await db.runAsync(
       `
       DELETE
       FROM invoice_items
       WHERE id = ?
-        AND invoice_id = ?
+      AND invoice_id = ?
       `,
       [invoiceItemId, invoiceId]
     )
-    console.log('success')
+    
+    if (res.changes === 0) {
+      return {
+        success: false,
+        error: {
+          code: "NOT_FOUND_ERROR",
+          message: "Item not found",
+        },
+      };
+    }
+
+    return {
+      success: true,
+      data: undefined,
+    };
+
   } catch (error) {
-    throw error
+    console.log(error)
+    return { 
+      success: false, 
+      error: {
+        code: "DATABASE_ERROR",
+        message: "Failed to delete item."
+      }
+    };
   }
 }
 

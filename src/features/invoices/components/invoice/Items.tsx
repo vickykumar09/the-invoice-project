@@ -1,48 +1,41 @@
 import ListEmpty from "@/components/flatlist/ListEmpty";
 import { gray } from "@/constants/color-palettes";
 import globalStyles from "@/styles/globalStyles";
-import {
-  Alert,
-  FlatList,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { Alert, FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 import { InvoiceItem } from "../../types/item";
 import { InvoiceItemRow } from "../rows/InvoiceItem";
+import ItemSeparator from "@/components/flatlist/ItemSeparator";
+import { InvoiceStatus, InvoiceType } from "../../types/invoice";
 
 type Props = {
+  invoice_id: string;
+  invoice_status: InvoiceStatus;
+  invoice_type: InvoiceType;
+  is_igst: boolean,
   items: InvoiceItem[];
-  onDeleteItem?: (itemId: string) => void;
+  onDeleteItem: (itemId: string) => void;
 };
 
-export default function InvoiceItems({ items, onDeleteItem }: Props) {
+export default function InvoiceItems({
+  invoice_id,
+  invoice_status,
+  invoice_type,
+  is_igst,
+  items,
+  onDeleteItem
+}: Props) {
   // Render Item Component
   const renderItem = ({ item }) => {
     return (
-      <Pressable
-        onLongPress={() => {
-          Alert.alert(
-            "Delete this invoice item ?",
-            "Are you sure you want to delete this inovice item",
-            [
-              {
-                text: "cancel",
-                style: "cancel",
-              },
-              {
-                text: "delete",
-                style: "destructive",
-                onPress: () => onDeleteItem(item.id),
-              },
-            ],
-          );
-        }}
-      >
-        <InvoiceItemRow item={item} />
-      </Pressable>
-    );
+      <InvoiceItemRow
+        invoice_id={invoice_id}
+        invoice_status={invoice_status}
+        invoice_type={invoice_type}
+        is_igst={is_igst}
+        item={item}
+        onDeleteItem={(itemId) => onDeleteItem(itemId)}
+      />
+    )
   };
 
   // Render Empty Component
@@ -75,6 +68,7 @@ export default function InvoiceItems({ items, onDeleteItem }: Props) {
         showsVerticalScrollIndicator={false}
         data={items}
         renderItem={renderItem}
+        ItemSeparatorComponent={ItemSeparator}
         contentContainerStyle={{ gap: 2 }}
         ListEmptyComponent={renderEmpty}
       />
