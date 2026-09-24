@@ -18,13 +18,14 @@ export default function InvoiceItemSummary({
   summary
 }: Props) {
   const {
-    quantity,
-    rate,
     rate_type,
     amount,
+    amountExcludingTax,
     discount_amount,
     taxable_amount,
-    tax_rate,
+    cgst_rate,
+    sgst_rate,
+    igst_rate,
     cgst_amount,
     sgst_amount,
     igst_amount,
@@ -49,20 +50,20 @@ export default function InvoiceItemSummary({
     }
 
     return [
-      { label: 'Amount', value: quantity * rate },
+      { label: 'Amount', value: amount },
 
       ...(rate_type === 'inclusive'
-        ? [{ label: 'Amount (Excl. Tax)', value: amount }]
+        ? [{ label: 'Amount (Excl. Tax)', value: amountExcludingTax }]
         : []),
 
       { label: 'Discount', value: discount_amount },
       { label: 'Taxable Value', value: taxable_amount },
 
       ...(isIgst
-        ? [{ label: 'IGST', value: igst_amount }]
+        ? [{ label: `IGST @ ${igst_rate}%`, value: igst_amount }]
         : [
-            { label: `CGST @ ${tax_rate / 2}%`, value: cgst_amount },
-            { label: `SGST @ ${tax_rate / 2}%`, value: sgst_amount },
+            { label: `CGST @ ${cgst_rate}%`, value: cgst_amount },
+            { label: `SGST @ ${sgst_rate}%`, value: sgst_amount },
           ]),
 
       ...(cess_amount > 0

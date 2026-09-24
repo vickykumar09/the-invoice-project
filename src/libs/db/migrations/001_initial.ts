@@ -3,7 +3,9 @@ import { ITEM_SCHEMA } from "../schemas/catalog";
 import {
   INVOICE_CUSTOMER_SCHEMA,
   INVOICE_ITEM_SCHEMA,
+  INVOICE_ITEM_TAX_SCHEMA,
   INVOICE_SCHEMA,
+  INVOICE_TAX_SCHEMA,
 } from "../schemas/invoice";
 import {
   MEASURE_UNIT_SCHEMA,
@@ -25,7 +27,9 @@ export async function migration001(db: SQLiteDatabase) {
 
     // Invoice Tables
     await db.execAsync(INVOICE_SCHEMA);
+    await db.execAsync(INVOICE_TAX_SCHEMA);
     await db.execAsync(INVOICE_CUSTOMER_SCHEMA);
     await db.execAsync(INVOICE_ITEM_SCHEMA);
+    await db.execAsync(INVOICE_ITEM_TAX_SCHEMA);
   });
 }

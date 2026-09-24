@@ -2,7 +2,6 @@ import { toPaise } from '@/utils/money/convert';
 import { FormValues } from '@/form/types';
 import { InvoiceItemSummaryParams } from '../../types/item';
 
-
 /**
  * 
  * Tax Exclusive
@@ -52,19 +51,19 @@ export function calculateInvoiceItemSummary({
   cess_type,
   cess_value
 }: FormValues<InvoiceItemSummaryParams>) {
-  // Calculate Tax Exclusive Rate
-  const originalRatePaise = toPaise(Number(rate))
-  const taxRate = Number(tax_rate)
+  const qty = Number(quantity);
+  const taxRate = Number(tax_rate);
+  const originalRatePaise = toPaise(Number(rate));
 
-  const ratePaise =
-    rate_type === 'inclusive'
-      ? extractTaxExclusiveRate(originalRatePaise, taxRate)
-      : originalRatePaise;
+  // Amount
+  const amount = qty * originalRatePaise;
+  
+  // Amount Excluding Tax
+  const ratePaise = rate_type === 'inclusive'
+    ? extractTaxExclusiveRate(originalRatePaise, taxRate)
+    : originalRatePaise;
 
-
-  // Calculate Amount : Qty * Rate (Tax Excl.)
-  const qty = Number(quantity)
-  const amount = Math.round(qty * ratePaise)
+  const amountExcludingTax = Math.round(qty * ratePaise);
   
   // Calculate Discount Amount
   const discount_value_num = Number(discount_value); 
@@ -72,7 +71,7 @@ export function calculateInvoiceItemSummary({
 
   switch (discount_type) {
     case 'percentage':
-      discount_amount = Math.round(amount * discount_value_num / 100)
+      discount_amount = Math.round(amountExcludingTax * discount_value_num / 100)
       break;
 
     case 'fixed':
@@ -85,7 +84,7 @@ export function calculateInvoiceItemSummary({
 
   // Allocate Invoice Discount Amount
   const invoice_discount_amount = 10000
-//   Item's allocated invoice discount = ( Item taxable value ÷ Total taxable value of all items ) * Invoice discount amount
+  // Item's allocated invoice discount = ( Item taxable value ÷ Total taxable value of all items ) * Invoice discount amount
   // Allocate Coupon Discount Amount
 
   // instead of only a running variable, calculate the remaining amount
@@ -93,14 +92,16 @@ export function calculateInvoiceItemSummary({
   // Calculate Taxable Amount : Amount - discount_amount
   const taxable_amount = Math.max(0, amount - discount_amount);
   
-  // Calculate Tax Amounts
-  let cgst_amount = 0;
-  let sgst_amount = 0; 
-  let igst_amount = 0;
+  // Calculate Tax Rates & Tax Amounts
+  let cgstRate = 0, sgstRate = 0, igstRate = 0;
+  let cgst_amount = 0, sgst_amount = 0, igst_amount = 0;
 
   if (is_igst) {
+    igstRate = taxRate;
     igst_amount = Math.round(taxable_amount * taxRate / 100);
   } else {
+    cgstRate = taxRate / 2;
+    sgstRate = taxRate / 2;
     cgst_amount = Math.round(taxable_amount * taxRate / 200);
     sgst_amount = Math.round(taxable_amount * taxRate / 200);
   }
@@ -122,20 +123,23 @@ export function calculateInvoiceItemSummary({
       throw new Error(`Unsupported cess type: ${cess_type}`);
   }
 
+  const taxesTotal = cgst_amount + sgst_amount + igst_amount + cess_amount
+
   // Calculate Total Amount
   let total_amount = 0;
   if (taxable_amount > 0) {
-    total_amount = taxable_amount + cgst_amount + sgst_amount + igst_amount + cess_amount
+    total_amount = taxable_amount + taxesTotal
   }
 
   return {
-    quantity: qty,
-    rate: originalRatePaise,
     rate_type,
     amount,
+    amountExcludingTax,
     discount_amount,
     taxable_amount,
-    tax_rate: taxRate,
+    cgst_rate: cgstRate,
+    sgst_rate: sgstRate,
+    igst_rate: igstRate,
     cgst_amount,
     sgst_amount,
     igst_amount,

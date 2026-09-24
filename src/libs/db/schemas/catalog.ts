@@ -28,14 +28,12 @@ export const ITEM_SCHEMA = `
 
     type TEXT NOT NULL
       CHECK (type IN ('product', 'service')),
-    
     name TEXT NOT NULL,
     description TEXT,
     measure_unit_id INTEGER NOT NULL,
 
     rate INTEGER NOT NULL
       CHECK (rate >= 1 AND rate <= 1000000000),
-      
     rate_type TEXT
       CHECK (rate_type IN ('inclusive', 'exclusive')),
 
@@ -46,10 +44,7 @@ export const ITEM_SCHEMA = `
         OR (tax_rate >= 0 AND tax_rate <= 100)
       ),
     cess_type TEXT
-      CHECK (cess_type IN (
-        'fixed',
-        'percentage'
-      )),
+      CHECK (cess_type IN ('fixed', 'percentage')),
     cess_value REAL 
       CHECK (
         CASE

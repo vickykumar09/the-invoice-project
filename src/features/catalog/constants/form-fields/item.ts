@@ -113,7 +113,6 @@ export const ITEM_FORM_FIELDS: FormField<ItemForm>[] = [
     constraints: {
       type: 'string',
       required: false,
-
       allowedValues: ['', 'inclusive', 'exclusive']
     }
   },

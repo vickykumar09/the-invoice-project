@@ -12,11 +12,7 @@ export const INVOICE_SCHEMA = `
     business_id TEXT NOT NULL,
 
     invoice_type TEXT NOT NULL
-      CHECK(invoice_type IN (
-        'none',
-        'taxable',
-        'exempt'
-      )),
+      CHECK(invoice_type IN ('none', 'taxable', 'exempt')),
     is_igst INTEGER NOT NULL DEFAULT 0
       CHECK (is_igst IN (0, 1)),
 
@@ -36,36 +32,19 @@ export const INVOICE_SCHEMA = `
     coupon_id TEXT,
     coupon_code TEXT,
     coupon_discount_type TEXT
-      CHECK(coupon_discount_type IN (
-        'percentage',
-        'fixed'
-      )),
+      CHECK(coupon_discount_type IN ('percentage', 'fixed')),
     coupon_discount_value INTEGER NOT NULL DEFAULT 0,
     coupon_discount_amount INTEGER NOT NULL DEFAULT 0,
 
     invoice_discount_type TEXT 
-      CHECK(invoice_discount_type IN (
-        'percentage',
-        'fixed'
-      )),
+      CHECK(invoice_discount_type IN ('percentage', 'fixed')),
     invoice_discount_value INTEGER NOT NULL DEFAULT 0,
     invoice_discount_amount INTEGER NOT NULL DEFAULT 0,
 
     discounts_total INTEGER NOT NULL DEFAULT 0,
 
-    taxable_amount INTEGER NOT NULL DEFAULT 0,
-
-    cgst_total INTEGER NOT NULL DEFAULT 0,
-    sgst_total INTEGER NOT NULL DEFAULT 0,
-    igst_total INTEGER NOT NULL DEFAULT 0,
-    cess_total INTEGER NOT NULL DEFAULT 0,
-    tax_total INTEGER NOT NULL DEFAULT 0,
-
     round_off_mode TEXT
-      CHECK(round_off_mode IN (
-        'up',
-        'down'
-      )),
+      CHECK(round_off_mode IN ('up', 'down')),
     round_off_amount INTEGER NOT NULL DEFAULT 0,
 
     grand_total INTEGER NOT NULL DEFAULT 0,
@@ -74,31 +53,44 @@ export const INVOICE_SCHEMA = `
     internal_note TEXT,
 
     status TEXT NOT NULL DEFAULT 'draft'
-      CHECK(status IN (
-        'draft',
-        'issued',
-        'cancelled'
-      )),
+      CHECK(status IN ('draft', 'issued', 'cancelled')),
     
     payment_status TEXT NOT NULL DEFAULT 'unpaid' 
-      CHECK(payment_status IN (
-        'unpaid',
-        'partially_paid',
-        'paid',
-        'overdue'
-      )),
-    
+      CHECK(payment_status IN ('unpaid', 'partially_paid', 'paid', 'overdue')),
     
     created_at TEXT NOT NULL,
     issued_at TEXT,
     cancelled_at TEXT,
     updated_at TEXT NOT NULL,
 
-    is_synced INTEGER NOT NULL DEFAULT 0 CHECK (
-      is_synced IN (0, 1)
-    ),
+    is_synced INTEGER NOT NULL DEFAULT 0
+      CHECK (is_synced IN (0, 1)),
 
     UNIQUE(business_id, invoice_number)
+  );
+`;
+
+export const INVOICE_TAX_SCHEMA = `
+  CREATE TABLE IF NOT EXISTS invoice_taxes (
+    invoice_id TEXT PRIMARY KEY,
+
+    taxable_total INTEGER NOT NULL DEFAULT 0,
+
+    cgst_total INTEGER NOT NULL DEFAULT 0,
+    sgst_total INTEGER NOT NULL DEFAULT 0,
+    igst_total INTEGER NOT NULL DEFAULT 0,
+    cess_total INTEGER NOT NULL DEFAULT 0,
+
+    tax_total INTEGER NOT NULL DEFAULT 0,
+
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL,
+    is_synced INTEGER NOT NULL DEFAULT 0
+      CHECK (is_synced IN (0, 1)),
+
+    FOREIGN KEY (invoice_id)
+      REFERENCES invoices(id)
+      ON DELETE CASCADE
   );
 `;
 
@@ -161,20 +153,19 @@ export const INVOICE_ITEM_SCHEMA = `
       CHECK (rate_type IN ('inclusive', 'exclusive')),
     
     quantity REAL NOT NULL CHECK (quantity > 0),
-    amount INTEGER DEFAULT 0,
+
+    amount INTEGER DEFAULT 0
+      CHECK (amount >= 0),
+    amount_excluding_tax INTEGER DEFAULT 0
+      CHECK (amount_excluding_tax >= 0),
 
     discount_type TEXT
-      CHECK(discount_type IN (
-        'fixed',
-        'percentage'
-      )),
+      CHECK(discount_type IN ('fixed', 'percentage')),
     discount_value REAL NOT NULL DEFAULT 0,
     discount_amount INTEGER NOT NULL DEFAULT 0,
 
     invoice_discount_amount INTEGER NOT NULL DEFAULT 0,
     coupon_discount_amount INTEGER NOT NULL DEFAULT 0,
-
-    taxable_amount INTEGER NOT NULL,
 
     hsn_sac_code TEXT,
     tax_rate REAL
@@ -182,15 +173,8 @@ export const INVOICE_ITEM_SCHEMA = `
         tax_rate = -1
         OR (tax_rate >= 0 AND tax_rate <= 100)
       ),
-    cgst_amount INTEGER NOT NULL DEFAULT 0,
-    sgst_amount INTEGER NOT NULL DEFAULT 0,
-    igst_amount INTEGER NOT NULL DEFAULT 0,
-
     cess_type TEXT 
-      CHECK (cess_type IN (
-        'fixed',
-        'percentage'
-      )),
+      CHECK (cess_type IN ('fixed', 'percentage')),
     cess_value REAL 
       CHECK (
         CASE
@@ -209,7 +193,6 @@ export const INVOICE_ITEM_SCHEMA = `
           ELSE 0
         END
       ),
-    cess_amount INTEGER NOT NULL DEFAULT 0,
 
     total_amount INTEGER NOT NULL DEFAULT 0,
 
@@ -220,6 +203,34 @@ export const INVOICE_ITEM_SCHEMA = `
 
     FOREIGN KEY (invoice_id)
       REFERENCES invoices(id)
+      ON DELETE CASCADE
+  );
+`;
+
+export const INVOICE_ITEM_TAX_SCHEMA = `
+  CREATE TABLE invoice_item_taxes (
+    invoice_item_id TEXT PRIMARY KEY,
+
+    taxable_amount INTEGER NOT NULL,
+
+    cgst_rate INTEGER NOT NULL DEFAULT 0,
+    cgst_amount INTEGER NOT NULL DEFAULT 0,
+
+    sgst_rate INTEGER NOT NULL DEFAULT 0,
+    sgst_amount INTEGER NOT NULL DEFAULT 0,
+
+    igst_rate INTEGER NOT NULL DEFAULT 0,
+    igst_amount INTEGER NOT NULL DEFAULT 0,
+
+    cess_amount INTEGER NOT NULL DEFAULT 0,
+
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL,
+    is_synced INTEGER NOT NULL DEFAULT 0
+      CHECK (is_synced IN (0, 1)),
+
+    FOREIGN KEY (invoice_item_id)
+      REFERENCES invoice_items(id)
       ON DELETE CASCADE
   );
 `;

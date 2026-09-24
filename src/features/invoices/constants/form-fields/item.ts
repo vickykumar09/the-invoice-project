@@ -61,23 +61,22 @@ export const INVOICE_ITEM_FORM_FIELDS: FormField<NewInvoiceItem>[] = [
     constraints: {
       type: 'decimal',
       required: true,
-      minLength: 1,
-      maxLength: 8,
       minValue: 0.01,
-      maxValue: 99999.99,
-    }
+      maxValue: 10000000,
+      maxLength: 10
+    },
   },
   {
     key: 'rate_type',
     label: 'Rate Type',
-
 
     type: 'Selector',
     props: {
       options: [
         { id: 1, label: 'Inclusive', value: 'inclusive'},
         { id: 2, label: 'Exclusive', value: 'exclusive'},
-      ]
+      ],
+      clearable: true
     },
     
     constraints: {
@@ -92,7 +91,7 @@ export const INVOICE_ITEM_FORM_FIELDS: FormField<NewInvoiceItem>[] = [
 
     type: 'TextInput',
     props: {
-      placeholder: '100',
+      placeholder: 'e.g. 100',
       keyboardType: 'numeric',
     },
     
@@ -118,7 +117,8 @@ export const INVOICE_ITEM_DISCOUNT_FIELDS: FormField<NewInvoiceItem>[] = [
       options: [
         { id: 1, label: 'Percentage', value: 'percentage' },
         { id: 2, label: 'Fixed', value: 'fixed' },
-      ]
+      ],
+      // clearable: true
     },
     constraints: {
       type: 'string',

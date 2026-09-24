@@ -12,14 +12,15 @@ import { useModal } from "@/hooks/useModal";
 import globalStyles from "@/styles/globalStyles";
 import modalStyle from "@/styles/modalStyles";
 import { confirmDiscard } from "@/utils/alerts";
-import { Feather } from "@expo/vector-icons";
-import { Alert, Modal, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Feather, FontAwesome } from "@expo/vector-icons";
+import { Alert, Modal, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { INVOICE_ITEM_DISCOUNT_FIELDS, INVOICE_ITEM_FORM_FIELDS, INVOICE_ITEM_TAX_FORM_FIELDS } from "../../../constants/form-fields/item";
 import { INITIAL_INVOICE_ITEM_STATE } from "../../../constants/initial-states/invoice-item";
 import IconBtn from "@/components/IconBtn";
 import ActionBtn from "@/components/ui/buttons/ActionBtn";
 import { insertInvoiceItem } from "@/features/invoices/services/sqlite/item";
 import InvoiceItemSummary from "../ItemSummary";
+import Counter from "@/form/components/Counter";
 
 type Props = {
   invoice_id: string;
@@ -53,19 +54,9 @@ export default function InvoiceItemComponent({
     const summary = calculateInvoiceItemSummary(data);
 
     return (
-      <View style={{gap: 12}}>
-        <View style={styles.footerContainer}>
-          <View style={globalStyles.flex_items_center_spaced_between}>
-            <Text
-              style={{
-                fontFamily: "RajdhaniBold",
-                fontSize: 20,
-                letterSpacing: 0.5,
-              }}
-            >
-              Summary
-            </Text>
-          </View>
+      <View style={styles.footerContainer}>
+        <View style={styles.summaryContainer}>
+          <Text style={{ fontFamily: "RajdhaniBold", fontSize: 20, letterSpacing: 0.5 }}>Summary</Text>
           <View style={{paddingHorizontal: 12 }}>
             <InvoiceItemSummary
               invoiceType={invoice_type}
@@ -73,20 +64,10 @@ export default function InvoiceItemComponent({
               summary={summary}
             />
           </View>
-
         </View>
-        <View style={[globalStyles.flex_items_center_spaced_between, {paddingHorizontal: 32, paddingVertical: 16}]}>
+        <View style={[globalStyles.flex_items_center_spaced_between, {paddingHorizontal: 32, paddingVertical: 16, justifyContent: 'center'}]}>
           <ActionBtn
-            size="small"
-            variant="outlined"
-            iconName="plus"
-            btnLabel="ADD"
-            rippleColor={rose[0]}
-            color={rose[8]}
-            onPress={() => console.log('helo')}
-          />
-          <ActionBtn
-            size="small"
+            size="medium"
             variant="filled"
             iconName="plus"
             btnLabel="ADD"
@@ -161,7 +142,6 @@ export default function InvoiceItemComponent({
                   fieldRenderer={itemFieldRenderer}
                   renderFooter={renderFooter}
                 />
-
                 <FormGuidelines
                   points={[
                     "Quantity must be a whole number or a decimal number (e.g., 5 or 5.25).",
@@ -171,7 +151,7 @@ export default function InvoiceItemComponent({
                     "Quantity must be a whole number or a decimal number (e.g., 5 or 5.25).",
                     "Quantity can be maximum of 999999.99.",
                     "Quantity must be a whole number or a decimal number (e.g., 5 or 5.25).",
-                    "Quantity can be maximum of 999999.99.",
+                    "Quantity can be maximum of 999999.99.ff",
                   ]}
                 />
               </View>
@@ -204,6 +184,9 @@ const styles = StyleSheet.create({
     fontFamily: "RajdhaniSemiBold",
   },
   footerContainer: {
+    gap: 12,
+  },
+  summaryContainer: {
     gap: 16,
     padding: 20,
     backgroundColor: "white",
