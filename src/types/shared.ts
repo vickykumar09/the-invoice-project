@@ -14,6 +14,7 @@ type CustomerActivity = {
 };
 
 export type ValueType =
+  | 'none'
   | 'fixed' 
   | 'percentage'
 

@@ -1,6 +1,7 @@
 import { toPaise } from '@/utils/money/convert';
-import { FormValues } from '@/form/types';
 import { InvoiceItemSummaryParams } from '../../types/item';
+import { RateType } from '@/features/catalog/types';
+import { ValueType } from '@/types/shared';
 
 /**
  * 
@@ -28,19 +29,57 @@ import { InvoiceItemSummaryParams } from '../../types/item';
  * @returns Tax-exclusive rate in paise.
  */
 
-const extractTaxExclusiveRate = (
-  ratePaise: number,
-  taxRate: number,
-): number => {
+function calculateInvoiceItemBase(
+  quantity: number,
+  rate: number,
+  rate_type: RateType | null,
+  discount_type: ValueType | null,
+  discount_value: number,
+  tax_rate: number | null,
+) {
+  // Convert Rate from rupees to Paise
+  const originalRatePaise = toPaise(rate);
 
-  if (taxRate <= 0) {
-    return ratePaise;
+  // Amount
+  const amount = quantity * originalRatePaise;
+  
+  // Amount Excluding Tax
+  const taxRate = tax_rate ?? 0
+  const ratePaise =
+    rate_type === 'inclusive' && taxRate > 0
+      ? Math.round((originalRatePaise * 100) / (100 + taxRate))
+      : originalRatePaise;
+
+  const amountExcludingTax = Math.round(quantity * ratePaise);
+  
+  // Calculate Item Discount Amount
+  let itemDiscountAmount = 0;
+
+  switch (discount_type) {
+    case 'percentage':
+      itemDiscountAmount = Math.round(amountExcludingTax * discount_value / 100)
+      break;
+
+    case 'fixed':
+      itemDiscountAmount = toPaise(discount_value);
+      break;
+
+    default:
+      throw new Error(`Unsupported discount type: ${discount_type}`);
   }
 
-  return Math.round((ratePaise * 100) / (100 + taxRate));
-};
+  const itemNetAmount = amountExcludingTax - itemDiscountAmount;
+
+  return {
+    amount,
+    amountExcludingTax,
+    itemDiscountAmount,
+    itemNetAmount,
+  };
+}
 
 export function calculateInvoiceItemSummary({
+  invoice_type,
   is_igst,
   quantity,
   rate,
@@ -49,101 +88,80 @@ export function calculateInvoiceItemSummary({
   discount_value,
   tax_rate,
   cess_type,
-  cess_value
-}: FormValues<InvoiceItemSummaryParams>) {
-  const qty = Number(quantity);
-  const taxRate = Number(tax_rate);
-  const originalRatePaise = toPaise(Number(rate));
-
-  // Amount
-  const amount = qty * originalRatePaise;
-  
-  // Amount Excluding Tax
-  const ratePaise = rate_type === 'inclusive'
-    ? extractTaxExclusiveRate(originalRatePaise, taxRate)
-    : originalRatePaise;
-
-  const amountExcludingTax = Math.round(qty * ratePaise);
-  
-  // Calculate Discount Amount
-  const discount_value_num = Number(discount_value); 
-  let discount_amount = 0;
-
-  switch (discount_type) {
-    case 'percentage':
-      discount_amount = Math.round(amountExcludingTax * discount_value_num / 100)
-      break;
-
-    case 'fixed':
-      discount_amount = toPaise(discount_value_num);
-      break;
-
-    default:
-      throw new Error(`Unsupported discount type: ${discount_type}`);
-  }
-
-  // Allocate Invoice Discount Amount
-  const invoice_discount_amount = 10000
-  // Item's allocated invoice discount = ( Item taxable value ÷ Total taxable value of all items ) * Invoice discount amount
-  // Allocate Coupon Discount Amount
-
-  // instead of only a running variable, calculate the remaining amount
-
-  // Calculate Taxable Amount : Amount - discount_amount
-  const taxable_amount = Math.max(0, amount - discount_amount);
+  cess_value,
+  allocatedInvoiceDiscount
+}: InvoiceItemSummaryParams) {
+  const {
+    amount,
+    amountExcludingTax,
+    itemDiscountAmount,
+    itemNetAmount
+  } = calculateInvoiceItemBase(
+    quantity,
+    rate,
+    rate_type,
+    discount_type,
+    discount_value,
+    tax_rate
+  )
   
   // Calculate Tax Rates & Tax Amounts
+  let taxableAmount = 0;
   let cgstRate = 0, sgstRate = 0, igstRate = 0;
-  let cgst_amount = 0, sgst_amount = 0, igst_amount = 0;
+  let cgstAmount = 0, sgstAmount = 0, igstAmount = 0;
+  let cessAmount = 0;
 
-  if (is_igst) {
-    igstRate = taxRate;
-    igst_amount = Math.round(taxable_amount * taxRate / 100);
-  } else {
-    cgstRate = taxRate / 2;
-    sgstRate = taxRate / 2;
-    cgst_amount = Math.round(taxable_amount * taxRate / 200);
-    sgst_amount = Math.round(taxable_amount * taxRate / 200);
+  if(invoice_type === 'taxable' && tax_rate && cess_value) {
+    taxableAmount = Math.max(0, itemNetAmount - allocatedInvoiceDiscount);
+    
+    // Calculate Tax Rates & Amounts
+    if (is_igst) {
+      igstRate = tax_rate;
+      igstAmount = Math.round(taxableAmount * tax_rate / 100);
+    } else {
+      cgstRate = tax_rate / 2;
+      sgstRate = tax_rate / 2;
+      cgstAmount = Math.round(taxableAmount * tax_rate / 200);
+      sgstAmount = Math.round(taxableAmount * tax_rate / 200);
+    }
+
+    // Calculate CESS Amount
+    switch (cess_type) {
+      case 'percentage':
+        cessAmount = Math.round(taxableAmount * cess_value / 100);
+        break;
+  
+      case 'fixed':
+        cessAmount = toPaise(cess_value);
+        break;
+  
+      default:
+        throw new Error(`Unsupported cess type: ${cess_type}`);
+    }
   }
 
-  // Calculate CESS Amount
-  const cess_value_num = Number(cess_value);
-  let cess_amount = 0;
-
-  switch (cess_type) {
-    case 'percentage':
-      cess_amount = Math.round(taxable_amount * cess_value_num / 100);
-      break;
-
-    case 'fixed':
-      cess_amount = toPaise(cess_value_num);
-      break;
-
-    default:
-      throw new Error(`Unsupported cess type: ${cess_type}`);
-  }
-
-  const taxesTotal = cgst_amount + sgst_amount + igst_amount + cess_amount
+  const taxesTotal = cgstAmount + sgstAmount + igstAmount + cessAmount
 
   // Calculate Total Amount
-  let total_amount = 0;
-  if (taxable_amount > 0) {
-    total_amount = taxable_amount + taxesTotal
+  let totalAmount = 0;
+  if (taxableAmount > 0) {
+    totalAmount = taxableAmount + taxesTotal
   }
 
   return {
     rate_type,
     amount,
     amountExcludingTax,
-    discount_amount,
-    taxable_amount,
+    discount_amount: itemDiscountAmount,
+    invoice_discount_amount: '',
+    taxable_amount: taxableAmount,
     cgst_rate: cgstRate,
     sgst_rate: sgstRate,
     igst_rate: igstRate,
-    cgst_amount,
-    sgst_amount,
-    igst_amount,
-    cess_amount,
-    total_amount
+    cgst_amount: cgstAmount,
+    sgst_amount: sgstAmount,
+    igst_amount: igstAmount,
+    cess_amount: cessAmount,
+    total_amount: totalAmount
   };
 } 

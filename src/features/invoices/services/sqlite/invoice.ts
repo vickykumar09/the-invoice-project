@@ -8,6 +8,9 @@ import { FetchFnParams } from "@/hooks/usePagination";
 import { Invoice, InvoiceInfoProps, InvoiceType } from "../../types/invoice";
 import { InvoiceItem } from "../../types/item";
 import { InvoiceCardData } from "../../types";
+import { getInvoiceItems } from "./item";
+import { getInvoiceCustomer } from "./customer";
+import { calculateInvoiceItemSummary } from "../../utils/calculators/invoiceItemSummary";
 
 // ------ Create Invoice ------ /
 export const createInvoice = async (
@@ -124,36 +127,158 @@ export const deleteInvoice = async (
 // ------ Issue Invoice ------ //
 export const issueInvoice = async (
   invoiceId: string,
-  invoice: Invoice
+  invoiceData: Invoice
 ): Promise<Result<Invoice>> => {
 
-  // 1. Get invoice
-  // 2. Verify it exists
-  // 3. Verify status is draft
-  // 4. Check invoice has at least one item
-  // 5. Update status + issued_at
-  // 6. Mark it for sync
+  // 1. Get invoice -> Verify it exists -> Status is 'draft'
+  const invoice = await getInvoice(invoiceId);
 
-  
-      // Invoice Existence - status 
-      // set issued_at and change status to issued
-      // change the status of invoice to issued and then move it to sync to cloud along with its invoice Items
-  // get invoiceitems
-  const invoiceItems: InvoiceItem[] = await getInvoiceItemsForInvoice(invoiceId)
+  if (!invoice) {
+    return { 
+      success: false,
+      error: {
+        code: "NOT_FOUND_ERROR",
+        message: "Invoice not found."
+      }
+    };
+  }
 
-  // Check if there is any invoice item  associated or not
-  const summary = calculateInvoiceSummary(
-    invoiceItems,
-    invoice
-  )
+  if (invoice.status !== "draft") {
+    return { 
+      success: false, 
+      error: {
+        code: "DATABASE_ERROR",
+        message: "Only draft invoices can be issued."
+      }
+    };
+  }
+
+  if (invoice.payment_status !== "unpaid") {
+    return { 
+      success: false, 
+      error: {
+        code: "DATABASE_ERROR",
+        message: "Invoice cannot be cancelled after payment."
+      }
+    };
+  }
+
+  // 2. Check invoice customer
+  const invoiceCustomer = await getInvoiceCustomer(invoiceId)
+
+  if(!invoiceCustomer) {
+    return {
+      success: false,
+      error: {
+        code: "NOT_FOUND_ERROR",
+        message: "No customer is added to this invoice"
+      }
+    }
+  }
+
+  // 3. Check invoice has at least one item
+  const invoiceItems: InvoiceItem[] = await getInvoiceItems(invoiceId)
   
+  if (invoiceItems.length === 0) {
+    return { 
+      success: false,
+      error: {
+        code: "NOT_FOUND_ERROR",
+        message: "You must add at least one invoice item to issue invoice."
+      }
+    };
+  }
+  
+  // 4. System Generated Data
   const now = new Date().toISOString();
 
+  // 4. DB Operation
   try {
     const db = await getDB();
+    await db.withTransactionAsync(async () => {
+      const isTaxable = invoice.invoice_type === 'taxable';
+      const calculatedItems = [];
+
+      for (const item of invoiceItems) {
+        const calculated = calculateInvoiceItemSummary(item);
+        calculatedItems.push(calculated);
+
+        if(isTaxable) {
+          await db.runAsync(
+            `INSERT INTO invoice_item_tax (
+              invoice_item_id,
+              taxable_amount,
+              cgst_rate,
+              cgst_amount,
+              sgst_rate,
+              sgst_amount,
+              igst_rate,
+              igst_amount,
+              cgst_amount,
+              created_at,
+              updated_at,
+              is_synced
+            )
+            VALUES (?, ...)`,
+              // values...
+            );
+          }
+
+        await db.runAsync(
+          `
+          UPDATE invoice_items
+          SET
+            amount = ?,
+            amount_excluding_tax = ?,
+            discount_amount = ?,
+            total_amount = ?,
+            updated_at = ?
+          WHERE id = ?
+          `,
+            // values...
+          );
+
+      }
+
+      const totals = calculateInvoiceSummary(calculatedItems, invoice);
+
+      if (isTaxable) {
+        await db.runAsync(
+          `INSERT INTO invoice_tax (
+            invoice_id,
+            taxable_total,
+            cgst_total,
+            sgst_total,
+            igst_total,
+            cess_total,
+            created_at,
+            updated_at,
+            is_synced
+          )
+          VALUES (?, ...)`,
+          // ...
+        );
+      }
+
+      await db.runAsync(
+        `UPDATE invoices
+        SET
+          subtotal = ?,
+          item_discounts_total = ?,
+          invoice_discount_amount = ?,
+          round_off_amount = ?,
+          grand_total = ?,
+          status = 'issued'
+          issued_at = ?,
+          updated_at = ?,
+        WHERE id = ?`,
+        // values...
+      );
+    });
+
     await db.runAsync(
       `
-      UPDATE invoices_new
+      UPDATE invoices
       SET
         subtotal = $subtotal,
         tax_total = $tax_total,
@@ -163,8 +288,8 @@ export const issueInvoice = async (
       WHERE id = $invoice_id;
       `,
       {
-        ...summary,
-        $subtotal: summary.subtotal,
+        // ...summary,
+        // $subtotal: summary.subtotal,
         $invoice_id: invoice.id,
         $issued_at: new Date().toISOString(),
         $status: "issued",
@@ -174,7 +299,7 @@ export const issueInvoice = async (
     console.log('success')
     return {
       success: true, 
-      data: invoice 
+      data: invoiceData
     };
   } catch (error) {
     console.log(error)

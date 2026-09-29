@@ -13,7 +13,7 @@ export const INVOICE_SCHEMA = `
 
     invoice_type TEXT NOT NULL
       CHECK(invoice_type IN ('none', 'taxable', 'exempt')),
-    is_igst INTEGER NOT NULL DEFAULT 0
+    is_igst INTEGER NOT NULL
       CHECK (is_igst IN (0, 1)),
 
     invoice_number TEXT,
@@ -29,22 +29,13 @@ export const INVOICE_SCHEMA = `
 
     item_discounts_total INTEGER NOT NULL DEFAULT 0,
 
-    coupon_id TEXT,
-    coupon_code TEXT,
-    coupon_discount_type TEXT
-      CHECK(coupon_discount_type IN ('percentage', 'fixed')),
-    coupon_discount_value INTEGER NOT NULL DEFAULT 0,
-    coupon_discount_amount INTEGER NOT NULL DEFAULT 0,
-
-    invoice_discount_type TEXT 
-      CHECK(invoice_discount_type IN ('percentage', 'fixed')),
+    invoice_discount_type TEXT NOT NULL DEFAULT 'none'
+      CHECK(invoice_discount_type IN ('none', 'percentage', 'fixed')),
     invoice_discount_value INTEGER NOT NULL DEFAULT 0,
     invoice_discount_amount INTEGER NOT NULL DEFAULT 0,
 
-    discounts_total INTEGER NOT NULL DEFAULT 0,
-
-    round_off_mode TEXT
-      CHECK(round_off_mode IN ('up', 'down')),
+    round_off_mode TEXT NOT NULL DEFAULT 'none'
+      CHECK(round_off_mode IN ('none', 'up', 'down')),
     round_off_amount INTEGER NOT NULL DEFAULT 0,
 
     grand_total INTEGER NOT NULL DEFAULT 0,
@@ -71,7 +62,7 @@ export const INVOICE_SCHEMA = `
 `;
 
 export const INVOICE_TAX_SCHEMA = `
-  CREATE TABLE IF NOT EXISTS invoice_taxes (
+  CREATE TABLE IF NOT EXISTS invoice_tax (
     invoice_id TEXT PRIMARY KEY,
 
     taxable_total INTEGER NOT NULL DEFAULT 0,
@@ -80,8 +71,6 @@ export const INVOICE_TAX_SCHEMA = `
     sgst_total INTEGER NOT NULL DEFAULT 0,
     igst_total INTEGER NOT NULL DEFAULT 0,
     cess_total INTEGER NOT NULL DEFAULT 0,
-
-    tax_total INTEGER NOT NULL DEFAULT 0,
 
     created_at TEXT NOT NULL,
     updated_at TEXT NOT NULL,
@@ -152,11 +141,12 @@ export const INVOICE_ITEM_SCHEMA = `
     rate_type TEXT
       CHECK (rate_type IN ('inclusive', 'exclusive')),
     
-    quantity REAL NOT NULL CHECK (quantity > 0),
+    quantity REAL NOT NULL
+      CHECK (quantity > 0),
 
-    amount INTEGER DEFAULT 0
+    amount INTEGER NOT NULL DEFAULT 0
       CHECK (amount >= 0),
-    amount_excluding_tax INTEGER DEFAULT 0
+    amount_excluding_tax INTEGER NOT NULL DEFAULT 0
       CHECK (amount_excluding_tax >= 0),
 
     discount_type TEXT
@@ -165,10 +155,9 @@ export const INVOICE_ITEM_SCHEMA = `
     discount_amount INTEGER NOT NULL DEFAULT 0,
 
     invoice_discount_amount INTEGER NOT NULL DEFAULT 0,
-    coupon_discount_amount INTEGER NOT NULL DEFAULT 0,
 
     hsn_sac_code TEXT,
-    tax_rate REAL
+    tax_rate REAL NOT NULL
       CHECK (
         tax_rate = -1
         OR (tax_rate >= 0 AND tax_rate <= 100)
@@ -208,20 +197,23 @@ export const INVOICE_ITEM_SCHEMA = `
 `;
 
 export const INVOICE_ITEM_TAX_SCHEMA = `
-  CREATE TABLE invoice_item_taxes (
+  CREATE TABLE invoice_item_tax (
     invoice_item_id TEXT PRIMARY KEY,
-
+    
     taxable_amount INTEGER NOT NULL,
-
-    cgst_rate INTEGER NOT NULL DEFAULT 0,
+      
+    cgst_rate REAL NOT NULL DEFAULT 0,
+      CHECK (cgst_rate >= 0 AND cgst_rate <= 100),
     cgst_amount INTEGER NOT NULL DEFAULT 0,
-
-    sgst_rate INTEGER NOT NULL DEFAULT 0,
+      
+    sgst_rate REAL NOT NULL DEFAULT 0,
+      CHECK (sgst_rate >= 0 AND sgst_rate <= 100),
     sgst_amount INTEGER NOT NULL DEFAULT 0,
-
-    igst_rate INTEGER NOT NULL DEFAULT 0,
+      
+    igst_rate REAL NOT NULL DEFAULT 0,
+      CHECK (igst_rate >= 0 AND igst_rate <= 100),
     igst_amount INTEGER NOT NULL DEFAULT 0,
-
+      
     cess_amount INTEGER NOT NULL DEFAULT 0,
 
     created_at TEXT NOT NULL,
@@ -489,6 +481,18 @@ export const TABLES = {
     );
   `,
 };
+
+
+/**
+ * Coupon Schema
+ * 
+ * coupon_id TEXT,
+ * coupon_code TEXT,
+ * coupon_discount_type TEXT
+ *  CHECK(coupon_discount_type IN ('percentage', 'fixed')),
+ * coupon_discount_value INTEGER NOT NULL DEFAULT 0,
+ * coupon_discount_amount INTEGER NOT NULL DEFAULT 0,
+ */
 
 // function resolveOrder(tables) {
 //   const visited = new Set();

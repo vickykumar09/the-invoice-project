@@ -28,6 +28,9 @@ export type Item = {
 
   rate: number;
   rate_type: RateType | null;
+
+  discount_type: ValueType | null;
+  discount_value: number;
   
   hsn_sac_code: string | null;
   tax_rate: number | null;

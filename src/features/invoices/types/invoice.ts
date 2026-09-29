@@ -7,6 +7,7 @@ export type InvoiceType =
   | 'exempt'
 
 export type InvoiceRoundOffMode = 
+  | 'none'
   | 'up'
   | 'down'
 
@@ -60,7 +61,7 @@ export type RefundStatus =
 
 
 
-// ------ SQLite DB Table Types ------
+// ------ SQLite DB Table Types ------ //
 export type Invoice = {
   id: string;
   business_id: string;
@@ -89,7 +90,7 @@ export type Invoice = {
   coupon_discount_value: number;
   coupon_discount_amount: number;
 
-  invoice_discount_type: ValueType | null;
+  invoice_discount_type: ValueType;
   invoice_discount_value: number;
   invoice_discount_amount: number;
 
@@ -103,7 +104,7 @@ export type Invoice = {
   cess_total: number;
   tax_total: number;
   
-  round_off_mode: InvoiceRoundOffMode | null;
+  round_off_mode: InvoiceRoundOffMode;
   round_off_amount: number;
 
   grand_total: number;
@@ -123,11 +124,16 @@ export type Invoice = {
 }
 
 
+// ------ Derived Types ------ //
 export type InvoiceInfoProps = Pick<
   Invoice,
-  | 'is_igst'
   | 'invoice_number'
   | 'invoice_date'
+>;
+
+export type InvoiceDetailsProps = Pick<
+  Invoice,
+  | 'is_igst'
   | 'place_of_supply'
   | 'sales_channel'
   | 'handled_by'
@@ -135,14 +141,14 @@ export type InvoiceInfoProps = Pick<
   | 'order_date'
 >;
 
-export type InvoiceDiscount = Pick<
+export type InvoiceDiscountProps = Pick<
   Invoice,
   | 'invoice_discount_type'
   | 'invoice_discount_value'
   | 'invoice_discount_amount'
 >;
 
-export type InvoiceRoundOff = Pick<
+export type InvoiceRoundOffProps = Pick<
   Invoice,
   | 'round_off_mode'
   | 'round_off_amount'

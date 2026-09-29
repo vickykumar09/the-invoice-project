@@ -5,7 +5,7 @@ import { NewInvoiceItem } from "@/features/invoices/types/item";
 export const ITEM_FORM_FIELDS: FormField<ItemForm>[] = [
   {
     key: 'type',
-    label: 'Item Type',
+    label: 'Type',
 
     type: 'Selector',
     props: {

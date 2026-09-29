@@ -12,7 +12,7 @@ import { useModal } from "@/hooks/useModal";
 import globalStyles from "@/styles/globalStyles";
 import modalStyle from "@/styles/modalStyles";
 import { confirmDiscard } from "@/utils/alerts";
-import { Feather, FontAwesome } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 import { Alert, Modal, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { INVOICE_ITEM_DISCOUNT_FIELDS, INVOICE_ITEM_FORM_FIELDS, INVOICE_ITEM_TAX_FORM_FIELDS } from "../../../constants/form-fields/item";
 import { INITIAL_INVOICE_ITEM_STATE } from "../../../constants/initial-states/invoice-item";
@@ -51,6 +51,7 @@ export default function InvoiceItemComponent({
     data,
     setErrors
   }: FormController<InvoiceItem>) => {
+    // First convert the form values to db types with toInsert invoice before sending to calculator
     const summary = calculateInvoiceItemSummary(data);
 
     return (

@@ -44,7 +44,9 @@ export default function InvoiceItemsScreen() {
       >
         <View style={{ flex: 1, gap: 20 }}>
           <InvoiceHero />
-          <InvoiceItems items={invoiceItems} />
+          <InvoiceItems
+            items={invoiceItems}
+          />
         </View>
       </SafeAreaView>
     </>

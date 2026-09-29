@@ -57,6 +57,11 @@ export default function InvoiceItemSummary({
         : []),
 
       { label: 'Discount', value: discount_amount },
+
+      ...(!discount_amount > 0
+        ? [{ label: 'Invoice Discount', value: discount_amount }]
+        : []),
+      
       { label: 'Taxable Value', value: taxable_amount },
 
       ...(isIgst

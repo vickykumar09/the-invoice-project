@@ -1,37 +1,84 @@
 // features/invoices/mappers/invoice.mapper.ts
 
-import { Invoice, InvoiceDiscount, InvoiceInfoProps, InvoiceRoundOff, InvoiceRoundOffMode, InvoiceSummary } from "../../types/invoice";
+import { 
+  Invoice,
+  InvoiceInfoProps,
+  InvoiceDetailsProps,
+  InvoiceDiscountProps,
+  InvoiceRoundOffProps,
+  InvoiceSummary, 
+} from "../../types/invoice";
 
+export function mapInvoice(
+  invoice: Invoice
+): {
+  info: InvoiceInfoProps,
+  details: InvoiceDetailsProps,
+  discount: InvoiceDiscountProps,
+  roundoff: InvoiceRoundOffProps
+} {
+  const { 
+    invoice_number,
+    invoice_date,
+    is_igst,
+    place_of_supply,
+    sales_channel,
+    handled_by,
+    order_id,
+    order_date,
+    invoice_discount_type,
+    invoice_discount_value,
+    invoice_discount_amount,
+    round_off_mode,
+    round_off_amount
+  } = invoice;
+  
+  return {
+    info: { invoice_number, invoice_date },
+    details: { is_igst, place_of_supply, sales_channel, handled_by, order_id, order_date },
+    discount: { invoice_discount_type, invoice_discount_value, invoice_discount_amount },
+    roundoff: { round_off_mode, round_off_amount }
+  }
+}
 
 export function mapInvoiceToInfo(invoice: Invoice | NewInvoice): InvoiceInfoProps {
+  const { invoice_number, invoice_date } = invoice;
   return {
-    is_igst: invoice.is_igst,
-    invoice_number: invoice.invoice_number,
-    invoice_date: invoice.invoice_date,
-    place_of_supply: invoice.place_of_supply,
-    sales_channel: invoice.sales_channel,
-    handled_by: invoice.handled_by,
-    order_id: invoice.order_id,
-    order_date: invoice.order_date,
+    invoice_number,
+    invoice_date
   };
 }
 
-export function mapInvoiceToDiscount(invoice: Invoice): InvoiceDiscount {
+export function mapInvoiceToDetails(invoice: Invoice | NewInvoice): InvoiceDetailsProps {
+  const { is_igst, place_of_supply, sales_channel, handled_by, order_id, order_date } = invoice;
   return {
-    invoice_discount_type: invoice.invoice_discount_type,
-    invoice_discount_value: invoice.invoice_discount_value,
-    invoice_discount_amount: invoice.invoice_discount_amount,
+    is_igst,
+    place_of_supply,
+    sales_channel,
+    handled_by,
+    order_id,
+    order_date,
+  };
+}
+
+export function mapInvoiceToDiscount(invoice: Invoice): InvoiceDiscountProps {
+  const { invoice_discount_type, invoice_discount_value, invoice_discount_amount } = invoice;
+  return {
+    invoice_discount_type,
+    invoice_discount_value,
+    invoice_discount_amount,
   }
 }
 
-export function mapInvoiceToRoundoff(invoice: Invoice): InvoiceRoundOff {
+export function mapInvoiceToRoundoff(invoice: Invoice): InvoiceRoundOffProps {
+  const { round_off_mode, round_off_amount } = invoice;
   return {
-    round_off_mode: invoice.round_off_mode,
-    round_off_amount: invoice.round_off_amount,
+    round_off_mode,
+    round_off_amount,
   }
 }
 
-export function  mapInvoiceToSummary(invoice: Invoice): InvoiceSummary {
+export function mapInvoiceToSummary(invoice: Invoice): InvoiceSummary {
   return {
     is_igst: invoice.is_igst,
     subtotal: invoice.subtotal,

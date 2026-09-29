@@ -31,6 +31,9 @@ export function calculateInvoiceRoundOff(
         }
         break;
       
+      case 'none':
+        break;
+      
       default: {
         throw new Error(`Unsupported round off mode: ${roundOffMode}`);
       }

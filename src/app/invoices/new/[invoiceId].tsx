@@ -1,15 +1,17 @@
-import IconBtn from "@/components/IconBtn";
+import TextLink from "@/components/ui/TextLink";
 import ActionBtn from "@/components/ui/buttons/ActionBtn";
-import { amber, gray, green, red, rose } from "@/constants/color-palettes";
+import { amber, blue, gray, green, red, rose } from "@/constants/color-palettes";
 import InvoiceCustomer from "@/features/invoices/components/invoice/Customer";
+import InvoiceDetails from "@/features/invoices/components/invoice/Details";
 import InvoiceInfo from "@/features/invoices/components/invoice/Info";
 import InvoiceItems from "@/features/invoices/components/invoice/Items";
 import InvoiceMeta from "@/features/invoices/components/invoice/Meta";
 import InvoiceSummaryComponent from "@/features/invoices/components/invoice/Summary";
 import InvoiceCustomerFormComponent from "@/features/invoices/components/invoice/new/Customer";
-import InvoiceDiscountComponent from "@/features/invoices/components/invoice/new/Discount";
+import InvoiceDiscount from "@/features/invoices/components/invoice/new/Discount";
 import InvoiceItemComponent from "@/features/invoices/components/invoice/new/Item";
-import InvoiceRoundOffComponent from "@/features/invoices/components/invoice/new/RoundOff";
+import InvoiceRoundOff from "@/features/invoices/components/invoice/new/RoundOff";
+import { InvoiceItemRow } from "@/features/invoices/components/rows/InvoiceItem";
 import { INVOICE_TYPE_DETAILS } from "@/features/invoices/constants/invoice-types";
 import { getInvoiceCustomer } from "@/features/invoices/services/sqlite/customer";
 import { deleteInvoice, getInvoice, issueInvoice } from "@/features/invoices/services/sqlite/invoice";
@@ -18,13 +20,13 @@ import { InvoiceCustomerDisplay } from "@/features/invoices/types/customer";
 import { Invoice } from "@/features/invoices/types/invoice";
 import { InvoiceItem } from "@/features/invoices/types/item";
 import { calculateInvoiceSummary } from "@/features/invoices/utils/calculators/invoiceSummary";
-import { mapInvoiceToDiscount, mapInvoiceToInfo, mapInvoiceToRoundoff } from "@/features/invoices/utils/mappers/invoice-mapper";
+import { mapInvoice, mapInvoiceToDetails, mapInvoiceToDiscount, mapInvoiceToInfo, mapInvoiceToRoundoff } from "@/features/invoices/utils/mappers/invoice-mapper";
 import globalStyles from "@/styles/globalStyles";
 import { confirmDelete, showError, showSuccess } from "@/utils/alerts";
-import { Feather } from "@expo/vector-icons";
+import { Feather, FontAwesome } from "@expo/vector-icons";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { ActivityIndicator, Alert, Button, ScrollView, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Alert, Button, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 // Check Invoice Id existence
@@ -82,9 +84,8 @@ export default function InvoiceIssueScreen() {
     return <ActivityIndicator />;
   }
 
-  const info = mapInvoiceToInfo(invoice);
-  const discount = mapInvoiceToDiscount(invoice);
-  const roundOff = mapInvoiceToRoundoff(invoice);
+  // Separte invoice data
+  const { info, details, discount, roundoff } = mapInvoice(invoice);
 
   // Invoice Summary
   const summary = calculateInvoiceSummary(invoiceItems, invoice);
@@ -162,7 +163,8 @@ export default function InvoiceIssueScreen() {
   const formData = customer
     ? (({ invoice_id, created_at, updated_at, bill_to_state, ship_to_state, ...data }) => data)(customer)
     : null;
-
+  
+  console.log('INVOICE', invoice)
   return (
     <>
       <Stack.Screen
@@ -180,10 +182,19 @@ export default function InvoiceIssueScreen() {
               alwaysBounceVertical={false}
               showsVerticalScrollIndicator={false}
             >
-              <View style={{ flex: 1, gap: 10 }}>
+              <View style={{ flex: 1, gap: 12 }}>
                 {/* Invoice Info */}
                 <View style={styles.container}>
-                  <InvoiceInfo data={info} />
+                  <InvoiceInfo
+                    data={info}
+                  />
+                </View>
+
+                {/* Invoice Details */}
+                <View style={styles.container}>
+                  <InvoiceDetails
+                    data={details}
+                  />
                 </View>
 
                 {/* Invoice Customer */}
@@ -199,28 +210,68 @@ export default function InvoiceIssueScreen() {
                 </View>
 
                 {/* Invoice Items */}
-                <View style={[styles.container, globalStyles.flex_items_center_spaced_between]}>
-                  <Text style={styles.sectionHeaderTxt}>Items [{invoiceItems.length}]</Text>
-                  <IconBtn
-                    icon={Feather}
-                    name="chevron-right"
-                    color={gray[7]}
-                    onPress={() => setView("items")}
-                  />
+                <View style={styles.container}>
+                  <View style={globalStyles.flex_items_center_spaced_between}>
+                    <Text style={styles.sectionHeaderTxt}>Items</Text>
+                    <InvoiceItemComponent
+                      invoice_id={invoice?.id}
+                      invoice_type={invoice?.invoice_type}
+                      is_igst={invoice?.is_igst}
+                      onAddItem={(item) => handleAddInvoiceItem(item)}
+                    />
+                  </View>
+
+                  {/* Show top 5 added items */}
+                  {invoiceItems.slice(0, 5).map((each) =>  {
+                    return (
+                      <InvoiceItemRow
+                        key={each.id}
+                        invoice_id={invoice.id}
+                        invoice_status={invoice.status}
+                        invoice_type={invoice.invoice_type}
+                        is_igst={invoice.is_igst}
+                        item={each}
+                        onDeleteItem={(itemId) => console.log('delete not allowed here')}
+                      />
+                    )
+                  })}
+                  
+                  {invoiceItems.length > 5 &&
+                    <View style={{ alignItems: "center" }}>
+                      {/* Replace the below view with pressable */}
+                      <View style={globalStyles.flex_items_center}>
+                        <Text>{invoiceItems.length}</Text>
+                        <TextLink
+                          text="View All"
+                          size={17}
+                          onPress={() => setView('items')}
+                        />
+                        <Feather name="chevron-right" size={20} color={blue[7]} style={{marginBottom: 3}} />
+                      </View>
+                    </View>
+                  }
+
                 </View>
 
-                {/* Invoice Actions */}
-                <View style={[styles.container, { gap: 16 }]}>
-                  <InvoiceDiscountComponent
-                    invoiceId={invoice.id}
-                    initialData={discount}
-                    onChange={loadData}
+                {/* Invoice Adjustments */}
+                <View style={[styles.container, { gap: 20 }]}>
+                  <InvoiceDiscount
+                    data={discount}
+                    onChange={(key, value) => {
+                      setInvoice(prev => {
+                        if (!prev) return prev;
+                        return { ...prev, [key]: value };
+                      });
+                    }}
                   />
-                  <InvoiceRoundOffComponent
-                    invoiceId={invoice.id}
-                    initialData={roundOff}
-                    preRoundOffTotalInPaise={summary.preRoundTotalPaise}
-                    onChange={loadData}
+                  <InvoiceRoundOff
+                    data={roundoff}
+                    onChange={(value) => {
+                      setInvoice(prev => {
+                        if (!prev) return prev;
+                        return { ...prev, round_off_mode: value };
+                      });
+                    }}
                   />
                 </View>
 
@@ -242,8 +293,7 @@ export default function InvoiceIssueScreen() {
                     onPress={handleIssueInvoice}
                   />
                   <Text style={{ textAlign: "center", color: amber[7] }}>
-                    Please review all invoice details carefully. Once generated,
-                    the invoice cannot be edited.
+                    Please review all invoice details carefully. Once generated, the invoice cannot be edited.
                   </Text>
                 </View>
 
@@ -284,14 +334,6 @@ export default function InvoiceIssueScreen() {
               items={invoiceItems}
               onDeleteItem={(itemId) => handleInvoiceItemDelete(itemId)}
             />
-            <View style={styles.invoiceItemComponentContainer}>
-              <InvoiceItemComponent
-                invoice_id={invoice?.id}
-                invoice_type={invoice?.invoice_type}
-                is_igst={invoice?.is_igst}
-                onAddItem={(item) => handleAddInvoiceItem(item)}
-              />
-            </View>
             <Button
               title="Back to Review"
               onPress={() => setView("review")}

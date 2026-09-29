@@ -16,8 +16,6 @@ export function calculateInvoiceSummary (
 ) {
   const {
     is_igst,
-    coupon_discount_type,
-    coupon_discount_value,
     invoice_discount_type,
     invoice_discount_value,
     round_off_mode
@@ -29,38 +27,16 @@ export function calculateInvoiceSummary (
   // Item Discounts
   const item_discounts_total = invoiceItems.reduce((sum, item) => sum + item.discount_amount, 0);
 
-  // Coupon Discount Amount
-  const coupon_discount_value_num = Number(coupon_discount_value); 
-  let coupon_discount_amount = 0;
-
-  switch (coupon_discount_type) {
-    case 'percentage':
-      coupon_discount_amount = Math.round(subtotal * coupon_discount_value_num / 100)
-      break;
-
-    case 'fixed':
-      coupon_discount_amount = toPaise(coupon_discount_value_num);
-      break;
-    
-    case null:
-      coupon_discount_amount = 0;
-      break;
-
-    default:
-      throw new Error(`Unsupported coupon type: ${coupon_discount_type}`);
-  }
-
-  // Invoice Discount Amount
-  const invoice_discount_value_num = Number(invoice_discount_value); 
+  // Invoice Discount Amount 
   let invoice_discount_amount = 0;
 
   switch (invoice_discount_type) {
     case 'percentage':
-      invoice_discount_amount = Math.round(subtotal * invoice_discount_value_num / 100)
+      invoice_discount_amount = Math.round(subtotal * invoice_discount_value / 100)
       break;
 
     case 'fixed':
-      invoice_discount_amount = toPaise(invoice_discount_value_num);
+      invoice_discount_amount = toPaise(invoice_discount_value);
       break;
 
     case null:
@@ -70,9 +46,12 @@ export function calculateInvoiceSummary (
     default:
       throw new Error(`Unsupported discount type: ${invoice_discount_type}`);
   }
-
+  
   // Total Discount
-  const discounts_total = item_discounts_total + coupon_discount_amount + invoice_discount_amount
+  const discounts_total = item_discounts_total + invoice_discount_amount
+
+  // Allocate Invoice Discount to Invoice Items
+
 
   // Taxable Amount
   const taxable_amount = invoiceItems.reduce((sum, item) => sum + item.taxable_amount, 0);
@@ -99,7 +78,6 @@ export function calculateInvoiceSummary (
     subtotal,
 
     item_discounts_total,
-    coupon_discount_amount,
     invoice_discount_amount,
     discounts_total,
 

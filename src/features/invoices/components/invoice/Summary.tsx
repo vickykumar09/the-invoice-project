@@ -17,7 +17,6 @@ export default function InvoiceSummaryComponent({
     is_igst,
     subtotal,
     item_discounts_total,
-    coupon_discount_amount,
     invoice_discount_amount,
     discounts_total,
     taxable_amount,
@@ -36,32 +35,26 @@ export default function InvoiceSummaryComponent({
       title: "Subtotal (Excl. GST)",
       amount: subtotal,
     },
-    {
-      title: "Discounts",
-      amount: discounts_total, // total discount
-      breakdown: [
-        { title: "Item Discounts", amount: item_discounts_total },
-        { title: "Coupon Discount", amount: coupon_discount_amount },
-        { title: "Invoice Discount", amount: invoice_discount_amount },
-      ],
+    { title: "Item Discounts",
+      amount: item_discounts_total
+    },
+    { title: "Invoice Discount",
+      amount: invoice_discount_amount
     },
     {
       title: "Taxable Amount",
       amount: taxable_amount,
     },
-    {
-      title: "Taxes",
-      amount: tax_total,
-      breakdown: is_igst
-        ? [
-            { title: "IGST", amount: igst_total },
-            { title: "CESS", amount: cess_total },
-          ]
-        : [
-            { title: "CGST", amount: cgst_total },
-            { title: "SGST", amount: sgst_total },
-            { title: "CESS", amount: cess_total },
-          ],
+    
+    ...(is_igst
+      ? [{ title: "IGST", amount: igst_total }]
+      : [
+          { title: "CGST", amount: cgst_total },
+          { title: "SGST", amount: sgst_total },
+        ]),
+    
+    { title: "CESS",
+      amount: cess_total
     },
     {
       title: "Round Off",

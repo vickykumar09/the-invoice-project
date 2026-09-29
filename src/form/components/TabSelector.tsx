@@ -41,11 +41,12 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1.5,
     borderColor: gray[2],
+    padding: 2
   },
   segment: {
     flex: 1,
     alignItems: "center",
-    paddingVertical: 12,
+    paddingVertical: 10,
     borderRadius: 6,
   },
   selectedSegment: {
