@@ -1,9 +1,33 @@
-import React from 'react';
+import React, { ComponentType } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native'
-import { Feather } from '@expo/vector-icons';
+import { Feather, FontAwesome, FontAwesome6 } from '@expo/vector-icons';
+import { green } from '@/constants/color-palettes';
+
+type BtnProps = {
+  variant?: 'ghost' | 'outlined' | 'filled';
+  shape?: 'squared' | 'rounded' | 'circle';
+  backgroundColor: string;
+  borderColor: string;
+  disabled: boolean;
+  onPress: () => void;
+}
+
+type IconProps = {
+  icon: ComponentType<any>;
+  name: string;
+  size?: number;
+  color?: string;
+}
+
+type LabelProps = {
+  label: string;
+  size: number;
+  color: string;
+}
 
 type ActionBtnProps = {
-  variant?: 'outlined' | 'filled';
+  variant?: 'ghost' | 'outlined' | 'filled';
+  shape?: 'squared' | 'rounded' | 'circle';
   size?: 'small' | 'medium' | 'large'; 
   disabled?: boolean;
   iconName: keyof typeof Feather.glyphMap;
@@ -21,25 +45,40 @@ const sizeStyles = {
     fontSize: 14,
   },
   medium: {
-    paddingHorizontal: 16,
-    paddingVertical: 10,
+    paddingHorizontal: 24,
+    paddingVertical: 12,
     iconSize: 20,
     fontSize: 15,
   },
   large: {
-    paddingHorizontal: 20,
-    paddingVertical: 14,
-    iconSize: 24,
-    fontSize: 16,
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    iconSize: 18,
+    fontSize: 18,
   },
 }
 
+const shapeStyles = {
+  squared: {
+    borderRadius: 8
+  },
+  rounded: {
+    borderRadius: 99
+  }
+
+}
+
 const variantStyles = {
-  filled: {
+  ghost: {
     borderWidth: 0,
   },
   outlined: {
-    borderWidth: 1,
+    borderWidth: 1.5,
+    paddingHorizontal: 24,
+    paddingVertical: 12
+  },
+  filled: {
+    borderWidth: 0,
   },
 };
 
@@ -55,7 +94,7 @@ export default function ActionBtn({
 }: ActionBtnProps) {
 
   const isFilled = variant === 'filled';
-  const backgroundColor = isFilled ? color : '#fff';
+  const backgroundColor = isFilled ? color : green[0];
   const contentColor = isFilled ? '#fff' : color;
 
   const { iconSize, fontSize, paddingHorizontal, paddingVertical } = sizeStyles[size];
@@ -83,15 +122,16 @@ export default function ActionBtn({
 
 const styles = StyleSheet.create({
   container: {
-    borderRadius: 8,
+    borderRadius: 99,
     overflow: 'hidden',
-    borderWidth: 1
+    borderWidth: 1,
+    backgroundColor: green[4]
   },
   pressable: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 8
+    gap: 6
   },
   pressed: {
     opacity: 0.7

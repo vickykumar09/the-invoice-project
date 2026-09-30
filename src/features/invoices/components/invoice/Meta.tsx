@@ -1,4 +1,4 @@
-import { gray, rose } from "@/constants/color-palettes";
+import { gray } from "@/constants/color-palettes";
 import globalStyles from "@/styles/globalStyles";
 import { formatDateString } from "@/utils/date-time/format";
 import { StyleSheet, Text, View } from "react-native";
@@ -19,75 +19,53 @@ export default function InvoiceMeta({
   updated_at,
 }: Props) {
   return (
-    <>
-      <View style={styles.metaContainer}>
-        <Text
-          style={{
-            fontFamily: "RajdhaniBold",
-            fontSize: 15,
-            textTransform: "uppercase",
-          }}
-        >
+    <View style={styles.container}>
+      <View style={styles.idContainer}>
+        <Text style={styles.idLabelTxt}>
           {INVOICE_TYPE_DETAILS[invoice_type].title} id
         </Text>
-        <Text style={{ color: gray[5] }}>{id}</Text>
+        <Text style={styles.idTxt}>{id}</Text>
       </View>
-      <View
-        style={[
-          globalStyles.flex_items_center_spaced_between,
-          {
-            borderBottomWidth: 1.5,
-            borderBottomColor: gray[1],
-            paddingVertical: 10,
-          },
-        ]}
-      >
+      
+      <View style={globalStyles.flex_items_center_spaced_between}>
         <Text style={styles.titleTxt}>Created On</Text>
         <Text style={styles.valueTxt}>
           {formatDateString(created_at, true)}
         </Text>
       </View>
-      <View
-        style={[
-          globalStyles.flex_items_center_spaced_between,
-          {
-            borderBottomWidth: 1.5,
-            borderBottomColor: gray[1],
-            paddingVertical: 10,
-          },
-        ]}
-      >
+
+      <View style={globalStyles.flex_items_center_spaced_between}>
         <Text style={styles.titleTxt}>Last Updated On</Text>
         <Text style={styles.valueTxt}>
           {formatDateString(updated_at, true)}
         </Text>
       </View>
-    </>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  titleTxt: {
+  container: {
+    gap: 10
+  },
+  idContainer: {
+    alignItems: "center",
+    marginBottom: 6
+  },
+  idLabelTxt: {
+    fontFamily: "NunitoExtraBold",
     fontSize: 15,
-    color: gray[6],
+    textTransform: "uppercase",
+  },
+  idTxt: {
+    color: gray[5]
+  },
+  titleTxt: {
+    fontFamily: "NunitoBold",
+    fontSize: 14,
+    color: gray[5],
   },
   valueTxt: {
     fontSize: 15,
-  },
-  metaContainer: {
-    alignItems: "center",
-    paddingBottom: 10,
-    borderBottomWidth: 1.5,
-    borderBottomColor: gray[1],
-  },
-  invoiceItemComponentContainer: {
-    zIndex: 99,
-    position: "absolute",
-    bottom: 0,
-    right: 0,
-    margin: 20,
-    padding: 12,
-    borderRadius: 12,
-    backgroundColor: rose[2],
   },
 });

@@ -1,5 +1,5 @@
 import React from "react";
-import { Alert, ScrollView, StyleSheet, View } from "react-native";
+import { Alert, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 // Expo
@@ -10,7 +10,7 @@ import PageMessage from "@/components/common/PageMessage";
 import ActionBtn from "@/components/ui/buttons/ActionBtn";
 
 // Constants
-import { gray, rose } from "@/constants/color-palettes";
+import { gray, green, rose } from "@/constants/color-palettes";
 import { INITIAL_INVOICE_STATE } from "@/features/invoices/constants/initial-states/invoice";
 import { invoiceFormRenderer } from "@/features/invoices/constants/invoice-form-render";
 import { INVOICE_TYPE_DETAILS } from "@/features/invoices/constants/invoice-types";
@@ -92,13 +92,16 @@ export default function NewInvoiceScreen() {
     return (
       <View style={styles.footerContainer}>
         <ActionBtn
-          variant="filled"
+          variant="outlined"
           iconName="plus"
           btnLabel="Create"
           rippleColor={rose[0]}
-          color={rose[8]}
+          color={green[8]}
           onPress={() => handleCreateInvoice(data, setErrors)}
         />
+        <Text style={{ textAlign: "center", color: rose[4], paddingHorizontal: 8 }}>
+          Please review the details entered above carefully. Once the invoice is created, these details cannot be edited.
+        </Text>
       </View>
     );
   };
@@ -159,5 +162,9 @@ const styles = StyleSheet.create({
   footerContainer: {
     paddingHorizontal: 32,
     paddingVertical: 20,
+    gap: 12,
+
+    alignItems: 'center',
+    justifyContent: 'center'
   },
 });

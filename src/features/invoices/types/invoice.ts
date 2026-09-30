@@ -78,32 +78,14 @@ export type Invoice = {
   order_id: string | null;
   order_date: string | null;
 
-  // Subtotal
   subtotal: number;
   
-  // Discount Details
   item_discounts_total: number;
-  
-  coupon_id: string | null;
-  coupon_code: string | null;
-  coupon_discount_type: ValueType;
-  coupon_discount_value: number;
-  coupon_discount_amount: number;
 
   invoice_discount_type: ValueType;
   invoice_discount_value: number;
   invoice_discount_amount: number;
 
-  discounts_total: number;
-
-  taxable_amount: number;
-  
-  cgst_total: number;
-  sgst_total: number;
-  igst_total: number;
-  cess_total: number;
-  tax_total: number;
-  
   round_off_mode: InvoiceRoundOffMode;
   round_off_amount: number;
 
@@ -122,6 +104,19 @@ export type Invoice = {
 
   is_synced: boolean;
 }
+
+export type InvoiceTax = {
+  invoice_id: string;
+  taxable_total: number;
+  cgst_total: number;
+  sgst_total: number;
+  igst_total: number;
+  cess_total: number;
+  
+  created_at: string;
+  updated_at: string;
+  is_synced: boolean;
+} 
 
 
 // ------ Derived Types ------ //

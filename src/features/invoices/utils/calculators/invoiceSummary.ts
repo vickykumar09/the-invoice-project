@@ -39,7 +39,7 @@ export function calculateInvoiceSummary (
       invoice_discount_amount = toPaise(invoice_discount_value);
       break;
 
-    case null:
+    case 'none':
       invoice_discount_amount = 0;
       break;
 

@@ -13,10 +13,6 @@ export type InvoiceItem = Pick<
   | 'rate_type'
   | 'discount_type'
   | 'discount_value'
-  | 'hsn_sac_code'
-  | 'tax_rate'
-  | 'cess_type'
-  | 'cess_value'
 > & {
   id: string;
   business_id: string;  
@@ -92,7 +88,4 @@ export type InvoiceItemSummaryParams = Pick<
   | 'rate_type'
   | 'discount_type'
   | 'discount_value'
-  | 'tax_rate'
-  | 'cess_type'
-  | 'cess_value'
 >

@@ -9,6 +9,4 @@ export const INITIAL_INVOICE_ITEM_STATE: InvoiceItem = {
   rate: 0,
 
   discount_type: 'percentage',
-
-  cess_type: 'percentage',
 };

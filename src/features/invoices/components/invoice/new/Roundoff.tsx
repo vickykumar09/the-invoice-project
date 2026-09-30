@@ -21,7 +21,7 @@ export default function InvoiceRoundOff({
         <TabSelector
           value={round_off_mode}
           options={[
-            { id: 1, label: 'None', value: '' },
+            { id: 1, label: 'None', value: 'none' },
             { id: 2, label: 'Up (+)', value: 'up' },
             { id: 3, label: 'Down (-)', value: 'down' },
           ]}

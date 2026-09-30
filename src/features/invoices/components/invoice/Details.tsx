@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
   titleTxt: {
     fontSize: 14,
     fontFamily: "NunitoBold",
-    color:  gray[4]
+    color:  gray[5]
   },
   valueTxt: {
     fontSize: 15,

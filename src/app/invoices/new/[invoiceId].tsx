@@ -1,16 +1,16 @@
 import TextLink from "@/components/ui/TextLink";
 import ActionBtn from "@/components/ui/buttons/ActionBtn";
-import { amber, blue, gray, green, red, rose } from "@/constants/color-palettes";
+import { blue, gray, red, rose } from "@/constants/color-palettes";
 import InvoiceCustomer from "@/features/invoices/components/invoice/Customer";
-import InvoiceDetails from "@/features/invoices/components/invoice/Details";
 import InvoiceInfo from "@/features/invoices/components/invoice/Info";
+import InvoiceDetails from "@/features/invoices/components/invoice/Details";
+import InvoiceDiscount from "@/features/invoices/components/invoice/new/Discount";
+import InvoiceRoundOff from "@/features/invoices/components/invoice/new/RoundOff";
 import InvoiceItems from "@/features/invoices/components/invoice/Items";
 import InvoiceMeta from "@/features/invoices/components/invoice/Meta";
 import InvoiceSummaryComponent from "@/features/invoices/components/invoice/Summary";
 import InvoiceCustomerFormComponent from "@/features/invoices/components/invoice/new/Customer";
-import InvoiceDiscount from "@/features/invoices/components/invoice/new/Discount";
 import InvoiceItemComponent from "@/features/invoices/components/invoice/new/Item";
-import InvoiceRoundOff from "@/features/invoices/components/invoice/new/RoundOff";
 import { InvoiceItemRow } from "@/features/invoices/components/rows/InvoiceItem";
 import { INVOICE_TYPE_DETAILS } from "@/features/invoices/constants/invoice-types";
 import { getInvoiceCustomer } from "@/features/invoices/services/sqlite/customer";
@@ -20,7 +20,7 @@ import { InvoiceCustomerDisplay } from "@/features/invoices/types/customer";
 import { Invoice } from "@/features/invoices/types/invoice";
 import { InvoiceItem } from "@/features/invoices/types/item";
 import { calculateInvoiceSummary } from "@/features/invoices/utils/calculators/invoiceSummary";
-import { mapInvoice, mapInvoiceToDetails, mapInvoiceToDiscount, mapInvoiceToInfo, mapInvoiceToRoundoff } from "@/features/invoices/utils/mappers/invoice-mapper";
+import { mapInvoice } from "@/features/invoices/utils/mappers/invoice-mapper";
 import globalStyles from "@/styles/globalStyles";
 import { confirmDelete, showError, showSuccess } from "@/utils/alerts";
 import { Feather, FontAwesome } from "@expo/vector-icons";
@@ -28,6 +28,8 @@ import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, Alert, Button, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import InvoiceShipping from "@/features/invoices/components/invoice/new/Shipping";
+import InvoiceBilling from "@/features/invoices/components/invoice/new/Billing";
 
 // Check Invoice Id existence
 // Check Invoice Status === 'draft'
@@ -198,7 +200,7 @@ export default function InvoiceIssueScreen() {
                 </View>
 
                 {/* Invoice Customer */}
-                <View style={styles.container}>
+                <View style={[styles.container, {gap: 20}]}>
                   <InvoiceCustomer
                     data={customer}
                   />
@@ -250,7 +252,6 @@ export default function InvoiceIssueScreen() {
                       </View>
                     </View>
                   }
-
                 </View>
 
                 {/* Invoice Adjustments */}
@@ -283,17 +284,17 @@ export default function InvoiceIssueScreen() {
                 </View>
 
                 {/* Btn - Generate Invoice */}
-                <View style={{ padding: 20, gap: 10 }}>
+                <View style={{ alignItems: 'center', padding: 20, gap: 12 }}>
                   <ActionBtn
                     variant="filled"
                     iconName="file-plus"
                     btnLabel="Issue Invoice"
-                    rippleColor={green[1]}
-                    color={green[7]}
+                    rippleColor={blue[1]}
+                    color={blue[7]}
                     onPress={handleIssueInvoice}
                   />
-                  <Text style={{ textAlign: "center", color: amber[7] }}>
-                    Please review all invoice details carefully. Once generated, the invoice cannot be edited.
+                  <Text style={{ textAlign: "center", color: rose[4], paddingHorizontal: 8 }}>
+                    Please review all invoice details carefully. Once issued, the invoice cannot be edited.
                   </Text>
                 </View>
 
@@ -308,14 +309,24 @@ export default function InvoiceIssueScreen() {
                 </View>
 
                 {/* Delete Invoice */}
-                <View style={{ padding: 20 }}>
+                <View style={[globalStyles.flex_items_center_spaced_between, { padding: 20 }]}>
                   <ActionBtn
-                    variant="outlined"
+                    variant="filled"
+                    size="medium"
                     iconName="file-plus"
                     btnLabel="Delete Invoice"
                     rippleColor={red[1]}
                     color={red[7]}
                     onPress={handleInvoiceDelete}
+                  />
+                  <ActionBtn
+                    variant="filled"
+                    size="medium"
+                    iconName="file-plus"
+                    btnLabel="Share as PDF"
+                    rippleColor={blue[1]}
+                    color={blue[7]}
+                    onPress={handleIssueInvoice}
                   />
                 </View>
               </View>

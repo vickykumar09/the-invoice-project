@@ -88,7 +88,7 @@ export default function InvoiceItemComponent({
       return;
     }
 
-    const res = await insertInvoiceItem(data, invoice_id);
+    const res = await insertInvoiceItem(invoice_id, invoice_type, data);
     if (!res.success) {
       // if (res.error.code === "VALIDATION_ERROR") {
       //   setErrors(res.error.fields ?? {});

@@ -6,13 +6,16 @@ import { InvoiceItem, NewInvoiceItem } from "../../types/item";
 import { Result } from "@/types/shared";
 import { validateInvoiceItem } from "../../utils/validators/item";
 import { toPaise } from "@/utils/money/convert";
+import { InvoiceType } from "../../types/invoice";
 
 
 // Insert Invoice Item to an invoice
 export const insertInvoiceItem = async (
+  invoiceId: string,
+  invoiceType: InvoiceType,
   insertData: NewInvoiceItem,
-  invoiceId: string
 ): Promise<Result<InvoiceItem>> => {
+  console.log('inset', insertData)
   // 1. Calculate Values
   const now = new Date().toISOString();
 

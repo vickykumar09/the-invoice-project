@@ -44,20 +44,19 @@ export function Toggle<T>({
 
 const styles = StyleSheet.create({
   container: {
-    minWidth: 70,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
+    padding: 2,
     borderRadius: 8,
     borderWidth: 1.5,
     borderColor: gray[2],
-    alignItems: 'center',
-    justifyContent: 'center',
     backgroundColor: gray[0],
   },
 
   label: {
     fontSize: 16,
     fontWeight: '600',
-    color: blue[7],
+    textAlign: 'center',
+    backgroundColor: gray[2],
+    paddingVertical: 8,
+    borderRadius: 6
   },
 });

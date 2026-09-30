@@ -156,8 +156,25 @@ export const INVOICE_ITEM_SCHEMA = `
 
     invoice_discount_amount INTEGER NOT NULL DEFAULT 0,
 
+    total_amount INTEGER NOT NULL DEFAULT 0,
+
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL,
+    is_synced INTEGER NOT NULL DEFAULT 0
+      CHECK (is_synced IN (0, 1)),
+
+    FOREIGN KEY (invoice_id)
+      REFERENCES invoices(id)
+      ON DELETE CASCADE
+  );
+`;
+
+export const INVOICE_ITEM_TAX_SCHEMA = `
+  CREATE TABLE invoice_item_tax (
+    invoice_item_id TEXT PRIMARY KEY,
+
     hsn_sac_code TEXT,
-    tax_rate REAL NOT NULL
+    tax_rate REAL
       CHECK (
         tax_rate = -1
         OR (tax_rate >= 0 AND tax_rate <= 100)
@@ -182,35 +199,18 @@ export const INVOICE_ITEM_SCHEMA = `
           ELSE 0
         END
       ),
-
-    total_amount INTEGER NOT NULL DEFAULT 0,
-
-    created_at TEXT NOT NULL,
-    updated_at TEXT NOT NULL,
-    is_synced INTEGER NOT NULL DEFAULT 0
-      CHECK (is_synced IN (0, 1)),
-
-    FOREIGN KEY (invoice_id)
-      REFERENCES invoices(id)
-      ON DELETE CASCADE
-  );
-`;
-
-export const INVOICE_ITEM_TAX_SCHEMA = `
-  CREATE TABLE invoice_item_tax (
-    invoice_item_id TEXT PRIMARY KEY,
     
     taxable_amount INTEGER NOT NULL,
       
-    cgst_rate REAL NOT NULL DEFAULT 0,
+    cgst_rate REAL NOT NULL DEFAULT 0
       CHECK (cgst_rate >= 0 AND cgst_rate <= 100),
     cgst_amount INTEGER NOT NULL DEFAULT 0,
       
-    sgst_rate REAL NOT NULL DEFAULT 0,
+    sgst_rate REAL NOT NULL DEFAULT 0
       CHECK (sgst_rate >= 0 AND sgst_rate <= 100),
     sgst_amount INTEGER NOT NULL DEFAULT 0,
       
-    igst_rate REAL NOT NULL DEFAULT 0,
+    igst_rate REAL NOT NULL DEFAULT 0
       CHECK (igst_rate >= 0 AND igst_rate <= 100),
     igst_amount INTEGER NOT NULL DEFAULT 0,
       

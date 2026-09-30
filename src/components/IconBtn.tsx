@@ -6,6 +6,8 @@ type IconBtnProps = {
   name: string;
   size?: number;
   color?: string;
+  variant?: 'ghost' | 'outlined' | 'filled';
+  shape?: 'squared' | 'rounded';
   onPress: () => void;
 };
 
@@ -17,7 +19,7 @@ export default function IconBtn({
   onPress,
 }: IconBtnProps) {
   return (
-    <Pressable
+    <Pressable   
       onPress={onPress}
       style={({ pressed }) => [
         styles.button,
