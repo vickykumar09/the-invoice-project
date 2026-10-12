@@ -1,4 +1,4 @@
-import { Item, ItemType } from "@/features/catalog/types";
+import { Item, ItemTax, ItemType } from "@/features/catalog/types";
 import { ValueType } from "@/types/shared";
 import { Invoice } from "./invoice";
 
@@ -10,7 +10,6 @@ export type InvoiceItem = Pick<
   | 'description'
   | 'measure_unit_id'
   | 'rate'
-  | 'rate_type'
   | 'discount_type'
   | 'discount_value'
 > & {
@@ -36,7 +35,14 @@ export type InvoiceItem = Pick<
 }
 
 // ------ INVOICE ITEM TAX------ //
-export type InvoiceItemTax = {
+export type InvoiceItemTax = Pick<
+  ItemTax,
+  | 'hsn_sac_code'
+  | 'rate_type'
+  | 'tax_rate'
+  | 'cess_type'
+  | 'cess_value'
+> & {
   invoice_item_id: string;
   taxable_amount: number;
   cgst_rate: number;
@@ -75,7 +81,8 @@ export type NewInvoiceItem = Pick<
 }
 
 
-export type InvoiceItemSummaryParams = Pick<
+export type InvoiceItemSummaryParams = 
+Pick<
   Invoice,
   | 'invoice_type'
   | 'is_igst'
@@ -85,7 +92,12 @@ export type InvoiceItemSummaryParams = Pick<
   InvoiceItem,
   | 'quantity'
   | 'rate'
-  | 'rate_type'
   | 'discount_type'
   | 'discount_value'
+> & Pick<
+  InvoiceItemTax,
+  | 'rate_type'
+  | 'tax_rate'
+  | 'cess_type'
+  | 'cess_value'
 >

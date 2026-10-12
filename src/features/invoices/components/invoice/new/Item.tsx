@@ -1,7 +1,7 @@
 import FormGuidelines from "@/components/common/FormGuidelines";
 import PageMessage from "@/components/common/PageMessage";
 import ModalHeader from "@/components/headers/ModalHeader";
-import { gray, rose } from "@/constants/color-palettes";
+import { blue, gray, rose } from "@/constants/color-palettes";
 import { itemFieldRenderer } from "@/features/catalog/constants/ItemFormRenderer";
 import { InvoiceType } from "@/features/invoices/types/invoice";
 import { InvoiceItem } from "@/features/invoices/types/item";
@@ -12,7 +12,7 @@ import { useModal } from "@/hooks/useModal";
 import globalStyles from "@/styles/globalStyles";
 import modalStyle from "@/styles/modalStyles";
 import { confirmDiscard } from "@/utils/alerts";
-import { Feather } from "@expo/vector-icons";
+import { Feather, FontAwesome, FontAwesome6 } from "@expo/vector-icons";
 import { Alert, Modal, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { INVOICE_ITEM_DISCOUNT_FIELDS, INVOICE_ITEM_FORM_FIELDS, INVOICE_ITEM_TAX_FORM_FIELDS } from "../../../constants/form-fields/item";
 import { INITIAL_INVOICE_ITEM_STATE } from "../../../constants/initial-states/invoice-item";
@@ -33,7 +33,7 @@ export default function InvoiceItemComponent({
   invoice_id,
   invoice_type,
   is_igst,
-  onAddItem,
+  onAddItem
 }: Props) {
   const { visible, openModal, closeModal } = useModal();
 
@@ -107,10 +107,10 @@ export default function InvoiceItemComponent({
   return (
     <>
       <IconBtn
-        icon={Feather}
+        icon={FontAwesome6}
         name="plus"
-        size={28}
-        color={rose[8]}
+        size={22}
+        color={blue[7]}
         onPress={openModal}
       />
 

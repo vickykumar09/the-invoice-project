@@ -21,23 +21,29 @@ export type Item = {
   // item_code: string | null;
   
   type: ItemType;
-
   name: string;
   description: string | null;
   measure_unit_id: number;
-
   rate: number;
-  rate_type: RateType | null;
 
-  discount_type: ValueType | null;
+  discount_type: ValueType;
   discount_value: number;
   
-  hsn_sac_code: string | null;
-  tax_rate: number | null;
-  cess_type: ValueType | null;
-  cess_value: number | null;
-
   is_active: boolean;
+  created_at: string;
+  updated_at: string;
+  is_synced: boolean;
+}
+
+export type ItemTax = {
+  item_id: string;
+  
+  hsn_sac_code: string | null;
+  rate_type: RateType;
+  tax_rate: number;
+  cess_type: ValueType;
+  cess_value: number | null;
+  
   created_at: string;
   updated_at: string;
   is_synced: boolean;

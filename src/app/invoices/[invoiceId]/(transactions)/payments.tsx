@@ -1,5 +1,5 @@
 import { useCallback, useEffect } from "react";
-import { FlatList, StyleSheet, View } from "react-native";
+import { FlatList, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 // Expo
@@ -36,11 +36,60 @@ export default function InvoicePaymentsScreen() {
     return <PaymentRow item={item} />;
   }, []);
 
+  // Render Header
+  const renderHeader = () => {
+    const paymentSummaryItems = [
+      { label: "Invoice Amount", value: 890 },
+      { label: "Amount Received", value: 800 },
+    ];
+
+    return (
+      <View style={{gap: 40}}>
+        <View>
+          <Text style={{
+  fontFamily: "RajdhaniBold",
+  fontSize: 18,
+  flexShrink: 1}}>Payment Summary</Text>
+          <View style={{gap: 8, marginLeft: 12,  marginVertical: 10}}>
+            {paymentSummaryItems.map((each) => {
+              const { label, value } = each;
+              return (
+                <View
+                  key={label}
+                  style={{flexDirection: 'row', alignItems: 'flex-start'}}
+                >
+                  <Text style={styles.titleTxt}>{label}</Text>
+                  <Text style={styles.valueTxt}>{value}</Text>
+                </View>
+              );
+            })}
+            <View style={{flexDirection: 'row', alignItems: 'flex-start', borderBottomWidth: 1.5, borderTopWidth: 1.5,  borderStyle: 'dotted', paddingVertical: 6}}>
+              <Text style={styles.titleTxt}>Balance Due</Text>
+              <Text style={styles.valueTxt}>90</Text>
+            </View>
+            <View style={{flexDirection: 'row', alignItems: 'flex-start' }}>
+              <Text style={styles.titleTxt}>Payment Status</Text>
+              <Text style={styles.valueTxt}>partially paid</Text>
+            </View>
+          </View>
+
+          <Text>Mark as Paid</Text>
+
+        </View>
+        <Text style={{
+fontFamily: "RajdhaniBold",
+fontSize: 18,
+flexShrink: 1,}}>Payment History</Text>
+      </View>
+    )
+  }
+
   // Render Footer
   // const renderFooter = () => {
   //   return (
   //     <View style={styles.invoiceItemComponentContainer}>
   //       <NewPaymentComponent invoiceId={invoiceId as string} />
+  //       <Text>Set </Text>
   //     </View>
   //   );
   // };
@@ -50,7 +99,7 @@ export default function InvoicePaymentsScreen() {
     return (
       <ListEmpty
         icon="money"
-        title="No payments for this invoice yet"
+        title="No payment history found for this invoice yet."
         subtitle="Payments recorded against this invoice will appear here."
       />
     );
@@ -58,21 +107,20 @@ export default function InvoicePaymentsScreen() {
 
   return (
     <>
-      <SafeAreaView
-        edges={["bottom", "left", "right"]}
-        style={globalStyles.safeAreaView}
-      >
+      <SafeAreaView edges={["bottom", "left", "right"]} style={globalStyles.safeAreaView}>
         <View style={{ flex: 1, gap: 10 }}>
           <InvoiceHero />
+          
           <FlatList
             data={data}
             keyExtractor={(item) => item.id}
             renderItem={renderItem}
             ItemSeparatorComponent={Separator}
+            ListHeaderComponent={renderHeader}
             // ListFooterComponent={renderFooter}
             ListEmptyComponent={!loading ? renderEmpty : null}
             contentContainerStyle={
-              data.length <= 0 && { flex: 1, backgroundColor: "white" }
+              data.length <= 0 && { flex: 1, backgroundColor: "white", padding: 20 }
             }
           />
         </View>
@@ -99,10 +147,15 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
   titleTxt: {
+    flex: 1,
     fontSize: 15,
-    color: gray[6],
+    fontFamily: "NunitoBold",
+    color: gray[5]
   },
   valueTxt: {
+    flex: 1,
+    flexShrink: 1,
+    textAlign: 'right',
     fontSize: 15,
   },
   metaContainer: {

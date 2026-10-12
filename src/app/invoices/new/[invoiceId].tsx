@@ -200,7 +200,7 @@ export default function InvoiceIssueScreen() {
                 </View>
 
                 {/* Invoice Customer */}
-                <View style={[styles.container, {gap: 20}]}>
+                <View style={[styles.container, { gap: 20 }]}>
                   <InvoiceCustomer
                     data={customer}
                   />
@@ -212,8 +212,8 @@ export default function InvoiceIssueScreen() {
                 </View>
 
                 {/* Invoice Items */}
-                <View style={styles.container}>
-                  <View style={globalStyles.flex_items_center_spaced_between}>
+                <View style={[styles.container, { paddingHorizontal: 0 }]}>
+                  <View style={[globalStyles.flex_items_center_spaced_between, { paddingHorizontal: 20 }]}>
                     <Text style={styles.sectionHeaderTxt}>Items</Text>
                     <InvoiceItemComponent
                       invoice_id={invoice?.id}
@@ -233,12 +233,12 @@ export default function InvoiceIssueScreen() {
                         invoice_type={invoice.invoice_type}
                         is_igst={invoice.is_igst}
                         item={each}
-                        onDeleteItem={(itemId) => console.log('delete not allowed here')}
+                        onDeleteItem={(itemId) => console.log('Delete not allowed here.')}
                       />
                     )
                   })}
                   
-                  {invoiceItems.length > 5 &&
+                  {invoiceItems.length > 4 &&
                     <View style={{ alignItems: "center" }}>
                       {/* Replace the below view with pressable */}
                       <View style={globalStyles.flex_items_center}>
@@ -248,7 +248,12 @@ export default function InvoiceIssueScreen() {
                           size={17}
                           onPress={() => setView('items')}
                         />
-                        <Feather name="chevron-right" size={20} color={blue[7]} style={{marginBottom: 3}} />
+                        <Feather
+                          name="chevron-right"
+                          size={20}
+                          color={blue[7]}
+                          style={{marginBottom: 3}}
+                        />
                       </View>
                     </View>
                   }

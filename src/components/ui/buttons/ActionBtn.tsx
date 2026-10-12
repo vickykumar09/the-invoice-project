@@ -1,4 +1,4 @@
-import React, { ComponentType } from 'react';
+import { ComponentType } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native'
 import { Feather, FontAwesome, FontAwesome6 } from '@expo/vector-icons';
 import { green } from '@/constants/color-palettes';

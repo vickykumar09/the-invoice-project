@@ -83,9 +83,9 @@ export function calculateInvoiceItemSummary({
   is_igst,
   quantity,
   rate,
-  rate_type,
   discount_type,
   discount_value,
+  rate_type,
   tax_rate,
   cess_type,
   cess_value,
@@ -143,7 +143,7 @@ export function calculateInvoiceItemSummary({
   const taxesTotal = cgstAmount + sgstAmount + igstAmount + cessAmount
 
   // Calculate Total Amount
-  let totalAmount = 0;
+  let totalAmount = itemNetAmount;
   if (taxableAmount > 0) {
     totalAmount = taxableAmount + taxesTotal
   }

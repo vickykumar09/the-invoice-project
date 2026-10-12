@@ -112,7 +112,7 @@ export default function InvoiceCustomer({
         <Text style={styles.headerTxt}>Ship To :</Text>
         {Boolean(is_shipping_same_as_billing) ? (
           <View style={globalStyles.flex_items_center}>
-            <FontAwesome6 name="check-square" color={blue[7]} size={16}/>
+            <FontAwesome6 name="check-square" color={gray[9]} size={16}/>
             <Text style={styles.detailTxt}>
               Same as billing address
             </Text>

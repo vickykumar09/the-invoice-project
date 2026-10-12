@@ -3,6 +3,24 @@ import { NewInvoiceItem } from "../../types/item"
 
 export const INVOICE_ITEM_FORM_FIELDS: FormField<NewInvoiceItem>[] = [
   {
+    key: 'type',
+    label: 'Type',
+
+    type: 'Selector',
+    props: {
+      options: [
+        { id: 1, label: 'Product', value: 'product' },
+        { id: 2, label: 'Service', value: 'service' }
+      ]
+    },
+    
+    constraints: {
+      type: 'string',
+      required: true,
+      allowedValues: ['product', 'service']
+    }
+  },
+  {
     key: 'name',
     label: 'Name',
 
@@ -96,7 +114,8 @@ export const INVOICE_ITEM_DISCOUNT_FIELDS: FormField<NewInvoiceItem>[] = [
     type: 'Selector',
     props: {
       options: [
-        { id: 1, label: 'Percentage', value: 'percentage' },
+        // { id: 1, label: 'None', value: 'none' },
+        { id: 2, label: 'Percentage', value: 'percentage' },
         { id: 2, label: 'Fixed', value: 'fixed' },
       ],
     },
@@ -147,14 +166,14 @@ export const INVOICE_ITEM_TAX_FORM_FIELDS: FormField<NewInvoiceItem>[] = [
     }
   },
   {
-    key: 'tax_type',
-    label: 'Tax Type',
+    key: 'rate_type',
+    label: 'Rate Type',
 
     type: 'Selector',
     props: {
       options: [
-        { id: 1, label: 'Inclusive', value: 'inclusive'},
-        { id: 2, label: 'Exclusive', value: 'exclusive'},
+        { id: 1, label: 'Inclusive of all taxes', value: 'inclusive'},
+        { id: 2, label: 'Exclusive of all taxes', value: 'exclusive'},
       ],
     },
     

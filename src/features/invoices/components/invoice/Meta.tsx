@@ -9,6 +9,8 @@ type Props = {
   id: string;
   invoice_type: InvoiceType;
   created_at: string;
+  issued_at: string;
+  cancelled_at: string;
   updated_at: string;
 };
 
@@ -16,6 +18,8 @@ export default function InvoiceMeta({
   id,
   invoice_type,
   created_at,
+  issued_at,
+  cancelled_at,
   updated_at,
 }: Props) {
   return (
@@ -33,6 +37,24 @@ export default function InvoiceMeta({
           {formatDateString(created_at, true)}
         </Text>
       </View>
+
+      {issued_at &&
+        <View style={globalStyles.flex_items_center_spaced_between}>
+          <Text style={styles.titleTxt}>Issued On</Text>
+          <Text style={styles.valueTxt}>
+            {formatDateString(issued_at, true)}
+          </Text>
+        </View>
+      }
+      
+      {cancelled_at &&
+        <View style={globalStyles.flex_items_center_spaced_between}>
+          <Text style={styles.titleTxt}>Cancelled On</Text>
+          <Text style={styles.valueTxt}>
+            {formatDateString(cancelled_at, true)}
+          </Text>
+        </View>
+      }
 
       <View style={globalStyles.flex_items_center_spaced_between}>
         <Text style={styles.titleTxt}>Last Updated On</Text>

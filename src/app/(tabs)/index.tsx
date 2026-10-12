@@ -1,5 +1,5 @@
 import HomeHeader from "@/components/headers/HomeHeader";
-import { INVOICE_ITEM_SCHEMA, INVOICE_SCHEMA } from "@/libs/db/schemas/invoice";
+import { INVOICE_ITEM_SCHEMA, INVOICE_ITEM_TAX_SCHEMA, INVOICE_SCHEMA } from "@/libs/db/schemas/invoice";
 import globalStyles from "@/styles/globalStyles";
 import { createTable, fetchTableData, getTablesList, readDb } from "@/utils/system/storage";
 import { Button, StyleSheet, Text, View } from "react-native";
@@ -13,7 +13,7 @@ export default function HomeScreen() {
         <View style={styles.container}>
           <Button
             title="Click Me"
-            onPress={() => createTable(true, 'invoice_items', INVOICE_ITEM_SCHEMA)}
+            onPress={() => createTable(true, 'invoice_item_tax', INVOICE_ITEM_TAX_SCHEMA)}
           />
           <Text>Edit src/app/index.tsx to edit this screen.</Text>
         </View>

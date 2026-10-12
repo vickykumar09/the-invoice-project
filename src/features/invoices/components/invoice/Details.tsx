@@ -1,8 +1,7 @@
 import { gray } from "@/constants/color-palettes";
-import globalStyles from "@/styles/globalStyles";
 import { formatDateString } from "@/utils/date-time/format";
 import { StyleSheet, Text, View } from "react-native";
-import { InvoiceDetailsProps, InvoiceInfoProps } from "../../types/invoice";
+import { InvoiceDetailsProps } from "../../types/invoice";
 
 export default function InvoiceDetails({
   data
@@ -53,7 +52,7 @@ export default function InvoiceDetails({
         return (
           <View
             key={title}
-            style={globalStyles.flex_items_center_spaced_between}
+            style={{flexDirection: 'row', alignItems: 'flex-start'}}
           >
             <Text style={styles.titleTxt}>{title}</Text>
             <Text style={styles.valueTxt}>{value}</Text>
@@ -69,11 +68,15 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   titleTxt: {
-    fontSize: 14,
+    flex: 1,
+    fontSize: 15,
     fontFamily: "NunitoBold",
-    color:  gray[5]
+    color: gray[5]
   },
   valueTxt: {
+    flex: 1,
+    flexShrink: 1,
+    textAlign: 'right',
     fontSize: 15,
   },
 });

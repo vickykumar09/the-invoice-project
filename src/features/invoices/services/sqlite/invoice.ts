@@ -195,107 +195,138 @@ export const issueInvoice = async (
   // 4. DB Operation
   try {
     const db = await getDB();
-    await db.withTransactionAsync(async () => {
-      const isTaxable = invoice.invoice_type === 'taxable';
-      const calculatedItems = [];
-
-      for (const item of invoiceItems) {
-        const calculated = calculateInvoiceItemSummary(item);
-        calculatedItems.push(calculated);
-
-        if(isTaxable) {
-          await db.runAsync(
-            `INSERT INTO invoice_item_tax (
-              invoice_item_id,
-              taxable_amount,
-              cgst_rate,
-              cgst_amount,
-              sgst_rate,
-              sgst_amount,
-              igst_rate,
-              igst_amount,
-              cgst_amount,
-              created_at,
-              updated_at,
-              is_synced
-            )
-            VALUES (?, ...)`,
-              // values...
-            );
-          }
-
-        await db.runAsync(
-          `
-          UPDATE invoice_items
-          SET
-            amount = ?,
-            amount_excluding_tax = ?,
-            discount_amount = ?,
-            total_amount = ?,
-            updated_at = ?
-          WHERE id = ?
-          `,
-            // values...
-          );
-
-      }
-
-      const totals = calculateInvoiceSummary(calculatedItems, invoice);
-
-      if (isTaxable) {
-        await db.runAsync(
-          `INSERT INTO invoice_tax (
-            invoice_id,
-            taxable_total,
-            cgst_total,
-            sgst_total,
-            igst_total,
-            cess_total,
-            created_at,
-            updated_at,
-            is_synced
-          )
-          VALUES (?, ...)`,
-          // ...
-        );
-      }
-
-      await db.runAsync(
-        `UPDATE invoices
-        SET
-          subtotal = ?,
-          item_discounts_total = ?,
-          invoice_discount_amount = ?,
-          round_off_amount = ?,
-          grand_total = ?,
-          status = 'issued'
-          issued_at = ?,
-          updated_at = ?,
-        WHERE id = ?`,
-        // values...
-      );
-    });
-
-    await db.runAsync(
+    const res = await db.runAsync(
       `
       UPDATE invoices
       SET
-        subtotal = $subtotal,
-        tax_total = $tax_total,
-        grand_total = $grand_total,
-        status = $status,
-        updated_at = $updated_at
+        status = $status
       WHERE id = $invoice_id;
       `,
       {
-        // ...summary,
-        // $subtotal: summary.subtotal,
-        $invoice_id: invoice.id,
-        $issued_at: new Date().toISOString(),
-        $status: "issued",
+        $invoice_id: invoiceId,
+        $status: 'issued',
+        $issued_at: now,
         $updated_at: now,
       }
     );
+
+    if(res.changes === 0) {
+      return {
+        success: false,
+        error: {
+          code: "DATABASE_ERROR",
+          message: "Could not cancel invoice."
+        }
+      };
+    }
+
+    return {
+      success: true, 
+      data: invoice 
+    };
+
+    // await db.withTransactionAsync(async () => {
+    //   const isTaxable = invoice.invoice_type === 'taxable';
+    //   const calculatedItems = [];
+
+    //   for (const item of invoiceItems) {
+    //     const calculated = calculateInvoiceItemSummary(item);
+    //     calculatedItems.push(calculated);
+
+    //     if(isTaxable) {
+    //       await db.runAsync(
+    //         `INSERT INTO invoice_item_tax (
+    //           invoice_item_id,
+    //           taxable_amount,
+    //           cgst_rate,
+    //           cgst_amount,
+    //           sgst_rate,
+    //           sgst_amount,
+    //           igst_rate,
+    //           igst_amount,
+    //           cgst_amount,
+    //           created_at,
+    //           updated_at,
+    //           is_synced
+    //         )
+    //         VALUES (?, ...)`,
+    //           // values...
+    //         );
+    //       }
+
+    //     await db.runAsync(
+    //       `
+    //       UPDATE invoice_items
+    //       SET
+    //         amount = ?,
+    //         amount_excluding_tax = ?,
+    //         discount_amount = ?,
+    //         total_amount = ?,
+    //         updated_at = ?
+    //       WHERE id = ?
+    //       `,
+    //         // values...
+    //       );
+
+    //   }
+
+    //   const totals = calculateInvoiceSummary(calculatedItems, invoice);
+
+    //   if (isTaxable) {
+    //     await db.runAsync(
+    //       `INSERT INTO invoice_tax (
+    //         invoice_id,
+    //         taxable_total,
+    //         cgst_total,
+    //         sgst_total,
+    //         igst_total,
+    //         cess_total,
+    //         created_at,
+    //         updated_at,
+    //         is_synced
+    //       )
+    //       VALUES (?, ...)`,
+    //       // ...
+    //     );
+    //   }
+
+    //   await db.runAsync(
+    //     `UPDATE invoices
+    //     SET
+    //       subtotal = ?,
+    //       item_discounts_total = ?,
+    //       invoice_discount_amount = ?,
+    //       round_off_amount = ?,
+    //       grand_total = ?,
+    //       status = 'issued'
+    //       issued_at = ?,
+    //       updated_at = ?,
+    //     WHERE id = ?`,
+    //     // values...
+    //   );
+    // });
+
+    // await db.runAsync(
+    //   `
+    //   UPDATE invoices
+    //   SET
+    //     subtotal = $subtotal,
+    //     tax_total = $tax_total,
+    //     grand_total = $grand_total,
+    //     status = $status,
+    //     updated_at = $updated_at
+    //   WHERE id = $invoice_id;
+    //   `,
+    //   {
+    //     // ...summary,
+    //     // $subtotal: summary.subtotal,
+    //     $invoice_id: invoice.id,
+    //     $issued_at: new Date().toISOString(),
+    //     $status: "issued",
+    //     $updated_at: now,
+    //   }
+    // );
+
     console.log('success')
     return {
       success: true, 

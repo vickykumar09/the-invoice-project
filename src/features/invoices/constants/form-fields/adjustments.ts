@@ -1,8 +1,8 @@
 import { FormField } from "@/form/types";
-import { InvoiceDiscount, InvoiceRoundOff } from "../../types/invoice";
+import { InvoiceDiscountProps, InvoiceRoundOffMode, InvoiceRoundOffProps } from "../../types/invoice";
 import { ROUND_OFF_MODES } from "../options/round-off-modes";
 
-export const INVOICE_DISCOUNT_FIELDS: FormField<InvoiceDiscount>[] = [
+export const INVOICE_DISCOUNT_FIELDS: FormField<InvoiceDiscountProps>[] = [
   { 
     key: 'invoice_discount_type',
     label: 'Discount Type',
@@ -18,7 +18,7 @@ export const INVOICE_DISCOUNT_FIELDS: FormField<InvoiceDiscount>[] = [
     constraints: {
       type: 'string',
       required: true,
-      allowedValues: ['percentage', 'fixed']
+      allowedValues: ['none', 'percentage', 'fixed']
     }
   },
   { 
@@ -43,7 +43,7 @@ export const INVOICE_DISCOUNT_FIELDS: FormField<InvoiceDiscount>[] = [
 
 ]
 
-export const INVOICE_ROUND_OFF_FIELDS: FormField<InvoiceRoundOff>[] = [
+export const INVOICE_ROUND_OFF_FIELDS: FormField<InvoiceRoundOffMode>[] = [
   { 
     key: 'round_off_mode',
     label: 'Mode',

@@ -1,5 +1,4 @@
 import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
 import globalStyles from '@/styles/globalStyles'
 import { gray } from '@/constants/color-palettes'
 import { formatDateString } from '@/utils/date-time/format'
@@ -18,15 +17,24 @@ export default function InvoiceInfo({
   return (
     <View style={globalStyles.flex_items_center_spaced_between}>
       <View>
-        <Text style={{fontSize: 14, fontFamily: "NunitoBold", color:  gray[5] }}>Invoice Number</Text>
-        <Text>{invoice_number ?? '- - - - - -'}</Text>
+        <Text style={styles.titleTxt}>Invoice Number</Text>
+        <Text style={styles.valueTxt}>{invoice_number ?? '- - - - - -'}</Text>
       </View>
       <View>
-        <Text style={{fontSize: 14, fontFamily: "NunitoBold", color:  gray[5] }}>Invoice Date</Text>
-        <Text style={{textAlign: 'right', fontSize: 15}}>{formatDateString(invoice_date)}</Text>
+        <Text style={styles.titleTxt}>Invoice Date</Text>
+        <Text style={[styles.valueTxt, { textAlign: 'right' }]}>{formatDateString(invoice_date)}</Text>
       </View>
     </View>
   )
 }
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+  titleTxt: {
+    fontFamily: 'NunitoBold',
+    fontSize: 15,
+    color: gray[5]
+  },
+  valueTxt: {
+    fontSize: 15,
+  }
+})

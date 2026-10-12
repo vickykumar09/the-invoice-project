@@ -2,6 +2,7 @@ import { businessInfo } from "@/constants/business";
 import { InvoiceItem } from "../../types/item";
 
 export const INITIAL_INVOICE_ITEM_STATE: InvoiceItem = {
+  type: 'product',
   name: '',
   description: '',
   quantity: 1,
@@ -9,4 +10,5 @@ export const INITIAL_INVOICE_ITEM_STATE: InvoiceItem = {
   rate: 0,
 
   discount_type: 'percentage',
+
 };

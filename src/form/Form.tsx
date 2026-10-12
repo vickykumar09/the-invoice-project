@@ -15,7 +15,7 @@ import Selector from "./components/Selector";
 import StepPicker from "./components/StepPicker";
 import TimePicker from "./components/TimePicker";
 import { FocusedField, FormProps } from "./types";
-
+import TabSelector from "./components/TabSelector";
 
 export default function Form<T extends object>({
   sections,
@@ -105,11 +105,10 @@ export default function Form<T extends object>({
                   case "Selector": {
                     const { options, clearable } = props;
                     inputUI = (
-                      <Selector
+                      <TabSelector
                         value={value}
                         options={options}
                         onChange={(value) => handleChange(key, value)}
-                        clearable={clearable}
                       />
                     );
                     break;

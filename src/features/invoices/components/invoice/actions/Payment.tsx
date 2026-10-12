@@ -17,7 +17,9 @@ type Props = {
   invoiceId: string;
 };
 
-export default function NewPaymentComponent({ invoiceId }: Props) {
+export default function NewPaymentComponent({
+  invoiceId
+}: Props) {
   const { visible, openModal, closeModal } = useModal();
 
   // Handle Invoice Item Addition

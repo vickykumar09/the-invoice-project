@@ -18,8 +18,8 @@ export const INVOICE_SCHEMA = `
 
     invoice_number TEXT,
     invoice_date TEXT NOT NULL,
-    place_of_supply TEXT NOT NULL,
 
+    place_of_supply TEXT NOT NULL,
     sales_channel TEXT NOT NULL,
     handled_by TEXT NOT NULL,
     order_id TEXT,
@@ -130,7 +130,7 @@ export const INVOICE_ITEM_SCHEMA = `
     invoice_id TEXT NOT NULL,
     item_id TEXT,
 
-    type TEXT
+    type TEXT NOT NULL
       CHECK (type IN ('product', 'service')),
     name TEXT NOT NULL,
     description TEXT,
@@ -138,8 +138,6 @@ export const INVOICE_ITEM_SCHEMA = `
 
     rate INTEGER NOT NULL
       CHECK (rate >= 1 AND rate <= 1000000000),
-    rate_type TEXT
-      CHECK (rate_type IN ('inclusive', 'exclusive')),
     
     quantity REAL NOT NULL
       CHECK (quantity > 0),
@@ -149,8 +147,8 @@ export const INVOICE_ITEM_SCHEMA = `
     amount_excluding_tax INTEGER NOT NULL DEFAULT 0
       CHECK (amount_excluding_tax >= 0),
 
-    discount_type TEXT
-      CHECK(discount_type IN ('fixed', 'percentage')),
+    discount_type TEXT NOT NULL
+      CHECK(discount_type IN ('none', 'fixed', 'percentage')),
     discount_value REAL NOT NULL DEFAULT 0,
     discount_amount INTEGER NOT NULL DEFAULT 0,
 
@@ -174,13 +172,15 @@ export const INVOICE_ITEM_TAX_SCHEMA = `
     invoice_item_id TEXT PRIMARY KEY,
 
     hsn_sac_code TEXT,
-    tax_rate REAL
+    rate_type TEXT NOT NULL
+      CHECK (rate_type IN ('inclusive', 'exclusive')),
+    tax_rate REAL NOT NULL
       CHECK (
         tax_rate = -1
         OR (tax_rate >= 0 AND tax_rate <= 100)
       ),
-    cess_type TEXT 
-      CHECK (cess_type IN ('fixed', 'percentage')),
+    cess_type TEXT NOT NULL
+      CHECK (cess_type IN ('none', 'fixed', 'percentage')),
     cess_value REAL 
       CHECK (
         CASE
@@ -230,11 +230,10 @@ export const INVOICE_ITEM_TAX_SCHEMA = `
 export const INVOICE_PAYMENT_SCHEMA = `
   CREATE TABLE IF NOT EXISTS invoice_payments (
     id TEXT PRIMARY KEY,
-    business_id TEXT NOT NULL,
     invoice_id TEXT NOT NULL,
 
     paid_at TEXT NOT NULL,
-    amount INTEGER NOT NULL DEFAULT 0 CHECK(amount > 0),
+    amount INTEGER NOT NULL CHECK(amount > 0),
     method TEXT NOT NULL
     CHECK(method IN (
       'cash',
@@ -247,7 +246,7 @@ export const INVOICE_PAYMENT_SCHEMA = `
       'credit_note',
       'other'
     )),
-    reference_id TEXT,
+    transaction_reference TEXT,
     notes TEXT,
 
     status TEXT NOT NULL DEFAULT 'completed'
@@ -261,12 +260,18 @@ export const INVOICE_PAYMENT_SCHEMA = `
 
     created_at TEXT NOT NULL,
     updated_at TEXT NOT NULL,
-    is_synced INTEGER NOT NULL DEFAULT 0 CHECK (is_synced IN (
-      0, 1
-    )),
 
-    FOREIGN KEY (invoice_id) REFERENCES invoices(id)
+    is_synced INTEGER NOT NULL DEFAULT 0
+      CHECK (is_synced IN (0, 1)),
+
+    FOREIGN KEY (invoice_id)
+      REFERENCES invoices(id)
   );
+`;
+
+export const INVOICE_PAYMENT_INDEXES = `
+  CREATE INDEX IF NOT EXISTS idx_invoice_payments_invoice_id
+  ON invoice_payments(invoice_id);
 `;
 
 export const INVOICE_REFUND_SCHMEA = `
@@ -451,6 +456,7 @@ export const INVOICE_DISPATCH_SCHEMA = `
 
     created_at TEXT NOT NULL,
     updated_at TEXT NOT NULL,
+    
     is_synced INTEGER DEFAULT 0
       CHECK (is_synced IN (0, 1)),
 

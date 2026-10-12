@@ -108,12 +108,13 @@ export type InvoiceDispatch =
 }
 
 export type InvoicePayment = 
-  InvoiceChildEntity & 
   InvoiceMetaEntity & {
-  paid_on: string;
+  id: string,
+  invoice_id: string,
+  paid_at: string;
   amount: number;
   method: PaymentMethods;
-  reference_id?: string | null
+  transaction_reference?: string | null
   notes?: string | null
   status: PaymentStatus
 }

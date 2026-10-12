@@ -34,10 +34,10 @@ export const ITEM_SCHEMA = `
 
     rate INTEGER NOT NULL
       CHECK (rate >= 1 AND rate <= 1000000000),
+      
+    hsn_sac_code TEXT,
     rate_type TEXT
       CHECK (rate_type IN ('inclusive', 'exclusive')),
-
-    hsn_sac_code TEXT,
     tax_rate REAL
       CHECK (
         tax_rate = -1

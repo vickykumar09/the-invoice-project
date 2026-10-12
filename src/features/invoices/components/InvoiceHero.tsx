@@ -20,6 +20,7 @@ function InvoiceHeroComponent() {
     bill_to_name,
     grand_total,
     status,
+    payment_status,
     updated_at,
   } = invoice;
 
@@ -36,7 +37,7 @@ function InvoiceHeroComponent() {
       {/* Middle - Customer Name & Grand Total */}
       <View style={globalStyles.flex_items_center_spaced_between}>
         <Text style={styles.customerTxt} numberOfLines={1}>
-          {bill_to_name}
+          {bill_to_name ?? 'Customer Name'}
         </Text>
         <Text style={styles.grandTotalTxt}>{formatCurrency(grand_total)}</Text>
       </View>
@@ -49,7 +50,7 @@ function InvoiceHeroComponent() {
         ]}
       >
         <Text style={{ color: green[7], fontWeight: 600, fontSize: 14 }}>
-          {status}
+          {status}  |  {payment_status}
         </Text>
         <Text style={styles.updatedAtTxt}>{getSmartTimestamp(updated_at)}</Text>
       </View>

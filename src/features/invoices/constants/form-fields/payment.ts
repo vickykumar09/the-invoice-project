@@ -3,11 +3,14 @@ import { InvoicePayment } from "../../types";
 
 export const PAYMENT_FORM_FIELDS: FormField<InvoicePayment>[] = [
   {
-    key: "paid_on",
+    key: "paid_at",
     label: "Payment Date",
 
     type: "DatePicker",
-    props: {},
+    props: {
+      minimumDate: new Date(),
+      maximumDate: new Date(),
+    },
 
     constraints: {
       type: "string",
@@ -17,11 +20,14 @@ export const PAYMENT_FORM_FIELDS: FormField<InvoicePayment>[] = [
   {
     key: "amount",
     label: "Amount",
-    placeholder: "e.g. ₹890",
-    icon: "rupee-sign",
-    keyboardType: "numeric",
 
-    rules: {
+    type: "TextInput",
+    props: {
+      placeholder: "e.g. ₹890",
+      keyboardType: "numeric",
+    },
+
+    constraints: {
       type: "integer",
       required: true,
       maxLength: 15,
@@ -30,33 +36,44 @@ export const PAYMENT_FORM_FIELDS: FormField<InvoicePayment>[] = [
   {
     key: "method",
     label: "Method",
-    component: {
-      type: "Picker",
-      options: PAYMENT_METHODS,
+
+    type: "Picker"
+    props: {
+      options: []
     },
 
-    rules: {
+    constraints: {
       type: "string",
       required: true,
       allowedValues: PAYMENT_METHODS_VALUES,
     },
   },
   {
-    key: "reference_no",
+    key: "transaction_reference",
     label: "Reference No.",
-    placeholder: "here write checque no., upi transaction id",
 
-    rules: {
+    type: 'TextInput',
+    props: {
+      placeholder: "here write checque no., upi transaction id",
+    },
+
+    constraints: {
       type: "string",
+      required: false
     },
   },
   {
     key: "notes",
     label: "Note",
-    placeholder: "write something related to this payment",
 
-    rules: {
+    type: 'TextInput',
+    props: {
+      placeholder: "write something related to this payment",
+    },
+
+    constraints: {
       type: "string",
+      required: false
     },
   },
 ] as const;
