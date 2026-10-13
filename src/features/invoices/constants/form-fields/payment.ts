@@ -33,21 +33,21 @@ export const PAYMENT_FORM_FIELDS: FormField<InvoicePayment>[] = [
       maxLength: 15,
     },
   },
-  {
-    key: "method",
-    label: "Method",
+  // {
+  //   key: "method",
+  //   label: "Method",
 
-    type: "Picker"
-    props: {
-      options: []
-    },
+  //   type: "Picker"
+  //   props: {
+  //     options: []
+  //   },
 
-    constraints: {
-      type: "string",
-      required: true,
-      allowedValues: PAYMENT_METHODS_VALUES,
-    },
-  },
+  //   constraints: {
+  //     type: "string",
+  //     required: true,
+  //     allowedValues: PAYMENT_METHODS_VALUES,
+  //   },
+  // },
   {
     key: "transaction_reference",
     label: "Reference No.",

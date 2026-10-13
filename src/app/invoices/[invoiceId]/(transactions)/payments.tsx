@@ -14,10 +14,13 @@ import { PaymentRow } from "@/features/invoices/components/rows/Payment";
 import { InvoicePayment } from "@/features/invoices/types";
 
 import ListEmpty from "@/components/flatlist/ListEmpty";
-import { gray, rose } from "@/constants/color-palettes";
+import { blue, gray, rose } from "@/constants/color-palettes";
 import { getInvoicePayments } from "@/features/invoices/services/sqlite/actions/payment";
 import usePagination from "@/hooks/usePagination";
 import globalStyles from "@/styles/globalStyles";
+import NewPaymentComponent from "@/features/invoices/components/invoice/actions/Payment";
+import TextLink from "@/components/ui/TextLink";
+import { Feather, FontAwesome } from "@expo/vector-icons";
 
 export default function InvoicePaymentsScreen() {
   const router = useRouter();
@@ -30,6 +33,12 @@ export default function InvoicePaymentsScreen() {
   useEffect(() => {
     fetchData();
   }, []);
+
+
+  // Handle Setting Invoice Payment Status to Paid Manually
+  const handleMarkAsPaid = () => {
+    return
+  }
 
   // Render Item
   const renderItem = useCallback(({ item }: { item: InvoicePayment }) => {
@@ -46,10 +55,7 @@ export default function InvoicePaymentsScreen() {
     return (
       <View style={{gap: 40}}>
         <View>
-          <Text style={{
-  fontFamily: "RajdhaniBold",
-  fontSize: 18,
-  flexShrink: 1}}>Payment Summary</Text>
+          <Text style={{ fontFamily: "RajdhaniBold", fontSize: 18 }}>Summary</Text>
           <View style={{gap: 8, marginLeft: 12,  marginVertical: 10}}>
             {paymentSummaryItems.map((each) => {
               const { label, value } = each;
@@ -72,27 +78,28 @@ export default function InvoicePaymentsScreen() {
               <Text style={styles.valueTxt}>partially paid</Text>
             </View>
           </View>
-
-          <Text>Mark as Paid</Text>
-
+          <View style={{alignItems: 'center'}}>
+            <TextLink
+              text="Mark As Paid"
+              onPress={() => console.log('paid')}
+              size={18}
+              color={blue[7]}
+            />
+          </View>
         </View>
-        <Text style={{
-fontFamily: "RajdhaniBold",
-fontSize: 18,
-flexShrink: 1,}}>Payment History</Text>
+        <Text style={{ fontFamily: "RajdhaniBold", fontSize: 18 }}>History</Text>
       </View>
     )
   }
 
   // Render Footer
-  // const renderFooter = () => {
-  //   return (
-  //     <View style={styles.invoiceItemComponentContainer}>
-  //       <NewPaymentComponent invoiceId={invoiceId as string} />
-  //       <Text>Set </Text>
-  //     </View>
-  //   );
-  // };
+  const renderFooter = () => {
+    return (
+      <View style={styles.invoiceItemComponentContainer}>
+        <NewPaymentComponent invoiceId={invoiceId as string} />
+      </View>
+    );
+  };
 
   // Render Empty
   const renderEmpty = () => {
@@ -107,17 +114,20 @@ flexShrink: 1,}}>Payment History</Text>
 
   return (
     <>
-      <SafeAreaView edges={["bottom", "left", "right"]} style={globalStyles.safeAreaView}>
-        <View style={{ flex: 1, gap: 10 }}>
+      <SafeAreaView edges={["top", "bottom", "left", "right"]} style={globalStyles.safeAreaView}>
+        <View style={{ flex: 1, gap: 14 }}>
           <InvoiceHero />
-          
+          <View style={[globalStyles.flex_items_center, {paddingHorizontal: 20}]}>
+            <Feather name="chevron-left" size={22}/>
+            <Text style={{ fontFamily: "RajdhaniBold", fontSize: 20,}}>Payments</Text>
+          </View>
           <FlatList
             data={data}
             keyExtractor={(item) => item.id}
             renderItem={renderItem}
             ItemSeparatorComponent={Separator}
             ListHeaderComponent={renderHeader}
-            // ListFooterComponent={renderFooter}
+            ListFooterComponent={renderFooter}
             ListEmptyComponent={!loading ? renderEmpty : null}
             contentContainerStyle={
               data.length <= 0 && { flex: 1, backgroundColor: "white", padding: 20 }

@@ -47,7 +47,8 @@ export const INVOICE_SCHEMA = `
       CHECK(status IN ('draft', 'issued', 'cancelled')),
     
     payment_status TEXT NOT NULL DEFAULT 'unpaid' 
-      CHECK(payment_status IN ('unpaid', 'partially_paid', 'paid', 'overdue')),
+      CHECK(payment_status IN ('unpaid', 'partially_paid', 'paid')),
+    payment_due_date TEXT NOT NULL,
     
     created_at TEXT NOT NULL,
     issued_at TEXT,

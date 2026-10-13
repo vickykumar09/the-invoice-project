@@ -3,7 +3,7 @@ import { rose } from "@/constants/color-palettes";
 import { PAYMENT_FORM_FIELDS } from "@/features/invoices/constants/form-fields/payment";
 import { INITIAL_INVOICE_PAYMENT_STATE } from "@/features/invoices/constants/initial-states/payment";
 import modalStyle from "@/styles/modalStyles";
-import { Feather } from "@expo/vector-icons";
+import { Feather, FontAwesome6 } from "@expo/vector-icons";
 import { Modal, ScrollView, Text, View } from "react-native";
 import { InvoicePayment } from "../../../types";
 
@@ -12,6 +12,7 @@ import { itemFieldRenderer } from "@/features/catalog/constants/ItemFormRenderer
 import Form from "@/form/Form";
 import { useModal } from "@/hooks/useModal";
 import { confirmDiscard } from "@/utils/alerts";
+import IconBtn from "@/components/IconBtn";
 
 type Props = {
   invoiceId: string;
@@ -53,7 +54,13 @@ export default function NewPaymentComponent({
 
   return (
     <>
-      <Feather name="plus" size={28} color={rose[8]} onPress={openModal} />
+      <IconBtn
+        icon={Feather}
+        name="plus"
+        size={28}
+        color={rose[8]}
+        onPress={openModal}
+      />
 
       <Modal
         visible={visible}
@@ -68,7 +75,7 @@ export default function NewPaymentComponent({
               onPress={() => confirmDiscard(closeModal)}
             />
             <ScrollView>
-              <View style={{ padding: 20, gap: 30 }}>
+              <View style={{ gap: 30 }}>
                 <Text
                   style={{
                     textAlign: "center",

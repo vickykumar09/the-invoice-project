@@ -20,7 +20,6 @@ export type InvoicePaymentStatus =
   | 'unpaid'
   | 'partially_paid'
   | 'paid'
-  | 'overdue'
 
 export type InvoiceActivityTypes =
   | 'invoice_created'
@@ -95,7 +94,9 @@ export type Invoice = {
   internal_note: string | null;
   
   status: InvoiceStatus;
+  
   payment_status: InvoicePaymentStatus;
+  payment_due_date: string;
 
   created_at: string;
   issued_at: string | null;

@@ -6,12 +6,16 @@ import { validateForm } from "@/form/validators/form";
 import { Result } from "@/types/shared";
 import { InvoicePayment } from "@/features/invoices/types";
 
-// Add an Invoice Payment to Invoice Payments Table
+// Add an Invoice Payment to Invoice Payments Table - only if invoice payment status is not 'paid'
 export const insertInvoicePayment = async(
   fields: FormField<InvoicePayment>[],
   paymentData: InvoicePayment,
   invoiceId: string,
 ): Promise<Result<InvoicePayment>> => {
+
+
+  // Check whether the invoice  payment status  is paid  or not.
+  
   // 1. Validate Input Fields
   const formErrors = validateForm<InvoicePayment>(paymentData, fields)  
   if (Object.keys(formErrors).length > 0) {
@@ -98,7 +102,7 @@ export const getInvoicePayments = async(
       SELECT *
       FROM invoice_payments
       WHERE invoice_id = ?
-      ORDER BY paid_on DESC
+      ORDER BY paid_at DESC
       `,
       [invoiceId]
     )
@@ -110,3 +114,24 @@ export const getInvoicePayments = async(
 }
 
 // Update an Invoice Payment Status
+export const updateInvoicePaymentStatus = async(
+  invoiceId: string
+) =>  {
+  try {
+    const db = await getDB();
+    const res = await db.runAsync(
+      `
+      UPDATE invoices
+      SET
+        payment_status = $payment_status
+      WHERE id = $invoice_id;
+      `,
+      {
+        $payment_status: 'paid',
+        $invoice_id: invoiceId
+      }
+    )
+  } catch (error) {
+    throw error;
+  }
+}

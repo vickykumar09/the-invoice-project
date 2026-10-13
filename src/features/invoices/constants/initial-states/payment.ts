@@ -3,13 +3,12 @@ import { InvoicePayment } from "../../types";
 
 export const INITIAL_INVOICE_PAYMENT_STATE: InvoicePayment = {
   id: '',
-  business_id: businessInfo.code,
   invoice_id: '',
 
-  paid_on: new Date().toISOString(),
+  paid_at: new Date().toISOString(),
   amount: 0,
   method: 'cash',
-  reference_id: null,
+  transaction_reference: null,
   notes: null,
   status: 'PENDING',
 

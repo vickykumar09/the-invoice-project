@@ -14,7 +14,6 @@ import { InvoiceCustomerDisplay } from "@/features/invoices/types/customer";
 import { Invoice } from "@/features/invoices/types/invoice";
 import {
   mapInvoice,
-  mapInvoiceToInfo,
   mapInvoiceToSummary,
 } from "@/features/invoices/utils/mappers/invoice-mapper";
 import { INVOICE_PAYMENT_SCHEMA } from "@/libs/db/schemas/invoice";
@@ -111,6 +110,10 @@ export default function InvoiceScreen() {
             <View style={styles.container}>
               <InvoiceInfo data={info} />
             </View>
+            <Text>Invoice Payment Status : {invoice.payment_status}</Text>
+            <Text>Invoice Status: {invoice.status}</Text>
+            <Text>Invoice Payment Due Date: {invoice.payment_due_date}</Text>
+            <Text>Invoice Balance Payment: {invoice.grand_total - invoice.paid_total}</Text>
 
             {/* Invoice Details */}
             <View style={styles.container}>

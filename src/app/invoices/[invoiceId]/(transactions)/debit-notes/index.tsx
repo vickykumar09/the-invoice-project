@@ -1,13 +1,13 @@
 import Separator from "@/components/flatlist/ItemSeparator";
 import ListEmpty from "@/components/flatlist/ListEmpty";
 import ActionBtn from "@/components/ui/buttons/ActionBtn";
-import { green } from "@/constants/color-palettes";
+import { gray, green } from "@/constants/color-palettes";
 import { InvoiceHero } from "@/features/invoices/components/InvoiceHero";
 import { InvoicePayment } from "@/features/invoices/types";
 import globalStyles from "@/styles/globalStyles";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useCallback } from "react";
-import { FlatList, StyleSheet, View } from "react-native";
+import { FlatList, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 /**
@@ -75,18 +75,19 @@ export default function InvoiceDebitNotesScreen() {
   return (
     <>
       <SafeAreaView
-        edges={["bottom", "left", "right"]}
+        edges={["top", "bottom", "left", "right"]}
         style={globalStyles.safeAreaView}
       >
-        <View style={{ flex: 1, gap: 20 }}>
+        <View style={{ flex: 1, gap: 12 }}>
           <InvoiceHero />
+          <Text style={{ fontFamily: "RajdhaniBold", fontSize: 20, paddingHorizontal: 20}}>Debit Notes</Text>
           <FlatList
             data={[]}
             renderItem={renderItem}
             ItemSeparatorComponent={Separator}
             ListEmptyComponent={renderEmpty}
             ListFooterComponent={renderFooter}
-            contentContainerStyle={{ flex: 1, backgroundColor: "white" }}
+            contentContainerStyle={{ flex: 1, backgroundColor: "white", borderTopWidth: 1.5, borderTopColor: gray[1] }}
           />
         </View>
       </SafeAreaView>
