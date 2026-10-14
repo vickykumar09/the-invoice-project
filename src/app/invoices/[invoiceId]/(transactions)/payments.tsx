@@ -114,13 +114,9 @@ export default function InvoicePaymentsScreen() {
 
   return (
     <>
-      <SafeAreaView edges={["top", "bottom", "left", "right"]} style={globalStyles.safeAreaView}>
+      <SafeAreaView edges={["bottom", "left", "right"]} style={globalStyles.safeAreaView}>
         <View style={{ flex: 1, gap: 14 }}>
           <InvoiceHero />
-          <View style={[globalStyles.flex_items_center, {paddingHorizontal: 20}]}>
-            <Feather name="chevron-left" size={22}/>
-            <Text style={{ fontFamily: "RajdhaniBold", fontSize: 20,}}>Payments</Text>
-          </View>
           <FlatList
             data={data}
             keyExtractor={(item) => item.id}

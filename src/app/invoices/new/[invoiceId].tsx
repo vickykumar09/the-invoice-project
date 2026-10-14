@@ -30,6 +30,7 @@ import { ActivityIndicator, Alert, Button, ScrollView, StyleSheet, Text, TextInp
 import { SafeAreaView } from "react-native-safe-area-context";
 import InvoiceShipping from "@/features/invoices/components/invoice/new/Shipping";
 import InvoiceBilling from "@/features/invoices/components/invoice/new/Billing";
+import IconBtn from "@/components/IconBtn";
 
 // Check Invoice Id existence
 // Check Invoice Status === 'draft'
@@ -212,51 +213,14 @@ export default function InvoiceIssueScreen() {
                 </View>
 
                 {/* Invoice Items */}
-                <View style={[styles.container, { paddingHorizontal: 0 }]}>
-                  <View style={[globalStyles.flex_items_center_spaced_between, { paddingHorizontal: 20 }]}>
-                    <Text style={styles.sectionHeaderTxt}>Items</Text>
-                    <InvoiceItemComponent
-                      invoice_id={invoice?.id}
-                      invoice_type={invoice?.invoice_type}
-                      is_igst={invoice?.is_igst}
-                      onAddItem={(item) => handleAddInvoiceItem(item)}
-                    />
-                  </View>
-
-                  {/* Show top 5 added items */}
-                  {invoiceItems.slice(0, 5).map((each) =>  {
-                    return (
-                      <InvoiceItemRow
-                        key={each.id}
-                        invoice_id={invoice.id}
-                        invoice_status={invoice.status}
-                        invoice_type={invoice.invoice_type}
-                        is_igst={invoice.is_igst}
-                        item={each}
-                        onDeleteItem={(itemId) => console.log('Delete not allowed here.')}
-                      />
-                    )
-                  })}
-                  
-                  {invoiceItems.length > 4 &&
-                    <View style={{ alignItems: "center" }}>
-                      {/* Replace the below view with pressable */}
-                      <View style={globalStyles.flex_items_center}>
-                        <Text>{invoiceItems.length}</Text>
-                        <TextLink
-                          text="View All"
-                          size={17}
-                          onPress={() => setView('items')}
-                        />
-                        <Feather
-                          name="chevron-right"
-                          size={20}
-                          color={blue[7]}
-                          style={{marginBottom: 3}}
-                        />
-                      </View>
-                    </View>
-                  }
+                <View style={[styles.container, globalStyles.flex_items_center_spaced_between]}>
+                  <Text style={styles.sectionHeaderTxt}>Items ({invoiceItems.length})</Text>
+                  <IconBtn
+                    icon={Feather}
+                    name="chevron-right"
+                    size={24}
+                    onPress={() => setView('items')}
+                  />
                 </View>
 
                 {/* Invoice Adjustments */}
@@ -350,6 +314,14 @@ export default function InvoiceIssueScreen() {
               items={invoiceItems}
               onDeleteItem={(itemId) => handleInvoiceItemDelete(itemId)}
             />
+            <View style={styles.invoiceItemComponentContainer}>
+              <InvoiceItemComponent
+                invoice_id={invoice?.id}
+                invoice_type={invoice?.invoice_type}
+                is_igst={invoice?.is_igst}
+                onAddItem={(item) => handleAddInvoiceItem(item)}
+              />
+            </View>
             <Button
               title="Back to Review"
               onPress={() => setView("review")}

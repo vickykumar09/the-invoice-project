@@ -74,8 +74,8 @@ const styles = StyleSheet.create({
     color: gray[5]
   },
   valueTxt: {
-    flex: 1,
-    flexShrink: 1,
+    flex: 1.5,
+    flexShrink: 1.5,
     textAlign: 'right',
     fontSize: 15,
   },

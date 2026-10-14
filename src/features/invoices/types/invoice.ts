@@ -125,6 +125,8 @@ export type InvoiceInfoProps = Pick<
   Invoice,
   | 'invoice_number'
   | 'invoice_date'
+  | 'status'
+  | 'payment_status'
 >;
 
 export type InvoiceDetailsProps = Pick<

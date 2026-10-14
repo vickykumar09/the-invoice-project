@@ -18,6 +18,10 @@ export const INVOICE_SCHEMA = `
 
     invoice_number TEXT,
     invoice_date TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'draft'
+      CHECK(status IN ('draft', 'issued', 'cancelled')),
+    payment_status TEXT NOT NULL DEFAULT 'unpaid' 
+      CHECK(payment_status IN ('unpaid', 'partially_paid', 'paid')),
 
     place_of_supply TEXT NOT NULL,
     sales_channel TEXT NOT NULL,
@@ -41,14 +45,8 @@ export const INVOICE_SCHEMA = `
     grand_total INTEGER NOT NULL DEFAULT 0,
     paid_total INTEGER NOT NULL DEFAULT 0,
 
-    internal_note TEXT,
-
-    status TEXT NOT NULL DEFAULT 'draft'
-      CHECK(status IN ('draft', 'issued', 'cancelled')),
-    
-    payment_status TEXT NOT NULL DEFAULT 'unpaid' 
-      CHECK(payment_status IN ('unpaid', 'partially_paid', 'paid')),
     payment_due_date TEXT NOT NULL,
+    internal_note TEXT,
     
     created_at TEXT NOT NULL,
     issued_at TEXT,
@@ -421,9 +419,11 @@ export const DEBIT_NOTE_ITEM_SCHEMA = `
 export const INVOICE_FEEDBACK_SCHEMA = `
   CREATE TABLE IF NOT EXISTS invoice_feedback (
     invoice_id TEXT PRIMARY KEY,
-    rating INTEGER,
+    rating INTEGER NOT NULL
+      CHECK (rating BETWEEN 1 AND 5),
     comment TEXT,
-    reviewed_at TEXT,
+
+    created_at TEXT NOT NULL,
 
     FOREIGN KEY (invoice_id)
       REFERENCES invoices(id)

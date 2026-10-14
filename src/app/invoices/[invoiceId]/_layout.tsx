@@ -63,7 +63,7 @@ export default function InvoiceLayout() {
         <Stack.Screen
           name="(transactions)/payments"
           options={{
-            headerTitle: "Invoice Payments",
+            headerTitle: "Payments",
           }}
         />
         <Stack.Screen

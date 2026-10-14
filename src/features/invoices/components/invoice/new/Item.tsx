@@ -107,10 +107,10 @@ export default function InvoiceItemComponent({
   return (
     <>
       <IconBtn
-        icon={FontAwesome6}
+        icon={Feather}
         name="plus"
-        size={22}
-        color={blue[7]}
+        size={28}
+        color={rose[8]}
         onPress={openModal}
       />
 

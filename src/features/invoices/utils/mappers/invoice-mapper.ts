@@ -6,7 +6,7 @@ import {
   InvoiceDetailsProps,
   InvoiceDiscountProps,
   InvoiceRoundOffProps,
-  InvoiceSummary, 
+  InvoiceSummary,
 } from "../../types/invoice";
 
 export function mapInvoice(
@@ -20,6 +20,8 @@ export function mapInvoice(
   const { 
     invoice_number,
     invoice_date,
+    status,
+    payment_status,
     is_igst,
     place_of_supply,
     sales_channel,
@@ -34,7 +36,7 @@ export function mapInvoice(
   } = invoice;
   
   return {
-    info: { invoice_number, invoice_date },
+    info: { invoice_number, invoice_date, status, payment_status },
     details: { is_igst, place_of_supply, sales_channel, handled_by, order_id, order_date },
     discount: { invoice_discount_type, invoice_discount_value, invoice_discount_amount },
     roundoff: { round_off_mode, round_off_amount }

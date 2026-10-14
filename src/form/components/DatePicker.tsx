@@ -3,9 +3,7 @@ import { gray } from "@/constants/color-palettes";
 import { toDateString } from "@/utils/date-time/convert";
 import { formatDateString } from "@/utils/date-time/format";
 import { Ionicons } from "@expo/vector-icons";
-import DateTimePicker, {
-  DateTimePickerEvent,
-} from "@react-native-community/datetimepicker";
+import DateTimePicker, { DateTimePickerChangeEvent } from "@react-native-community/datetimepicker";
 import { useState } from "react";
 import { Platform, StyleSheet, Text, View } from "react-native";
 
@@ -27,14 +25,14 @@ export default function DatePicker({
 }: Props) {
   const [show, setShow] = useState<boolean>(false);
 
-  const handleChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
-    if (event.type === "set" && selectedDate) {
+  const handleChange = (event: DateTimePickerChangeEvent, selectedDate?: Date) => {
+    if (selectedDate) {
       const date = toDateString(selectedDate);
       onChange(date);
     }
     setShow(false);
   };
-
+  console.log(show)
   return (
     <>
       <View style={styles.container}>
@@ -66,7 +64,8 @@ export default function DatePicker({
           display={Platform.OS === "ios" ? "spinner" : "default"}
           minimumDate={minimumDate}
           maximumDate={maximumDate}
-          onChange={handleChange}
+          onValueChange={handleChange}
+          onDismiss={() => setShow(false)}
         />
       )}
     </>
