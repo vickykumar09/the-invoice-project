@@ -96,7 +96,7 @@ export type Invoice = {
   status: InvoiceStatus;
   
   payment_status: InvoicePaymentStatus;
-  payment_due_date: string;
+  payment_due_date: string | null;
 
   created_at: string;
   issued_at: string | null;

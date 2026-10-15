@@ -199,11 +199,9 @@ td.description {
             <th style="text-align: center">Quantity</th>
             <th style="text-align: right">Rate</th>
             <th style="text-align: right">Discount</th>
-            <th style="text-align: right">Taxable<br>Value</th>
-            <th style="text-align: right">CGST</th>
-            <th style="text-align: right">SGST/<br>UTGST</th>
-            <th style="text-align: right">CESS</th>
-            <th style="text-align: right">Total<br>Amount</th>
+            <th style="text-align: right">Taxable Value</th>
+            <th style="text-align: right">Taxes</th>
+            <th style="text-align: right">Amount</th>
           </tr>
         </thead>
 
@@ -216,19 +214,18 @@ td.description {
             <td class="description">
               <div class="invoice-item">
                 <strong>${item.name} and two ounces of of beer afdsfoisaffjsslljfaaofius fsaajdf fsaddfkdsajl</strong><br>
-                <p style="color: #555, background-color: green">CGST: ${item.taxRate / 2}% SGST: ${item.taxRate / 2}%</p>
+                <p style="color: #555, background-color: green">CGST @ ${item.taxRate / 2}%: ${item.cgstAmount.toFixed(2)} | SGST @ ${item.taxRate / 2}%: ${item.sgstAmount.toFixed(2)}</p>
+                <p style="color: #555, background-color: green">Item Discount: Allocated Invoice Discount</p>
                 <p>HSN/SAC: ${item.hsnSacCode}</p>
               </div>
             </td>
 
             <td style="text-align: center">${item.quantity}<br>pcs</td>
-            <td style="text-align: right">${item.price.toFixed(2)}</td>
+            <td style="text-align: right">${item.price.toFixed(2)}<br><small>(incl. of taxes)</small></td>
             <td style="text-align: right">${item.discount.toFixed(2)}</td>
             <td style="text-align: right">${item.taxableValue.toFixed(2)}</td>
 
-            <td style="text-align: right">${item.cgstAmount.toFixed(2)}</td>
-            <td style="text-align: right">${item.sgstAmount.toFixed(2)}</td>
-            <td style="text-align: right">0</td>
+            <td style="text-align: right">${(item.cgstAmount + item.sgstAmount).toFixed(2)}</td>
 
             <td style="text-align: right">${item.totalAmount.toFixed(2)}</td>
           </tr>

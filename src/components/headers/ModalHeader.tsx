@@ -1,5 +1,5 @@
 import { gray, rose } from "@/constants/color-palettes";
-import { FontAwesome } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { StyleSheet, Text, View } from "react-native";
 import IconBtn from "../IconBtn";
 
@@ -12,8 +12,17 @@ export default function ModalHeader({
 }) {
   return (
     <View style={styles.container}>
-      <Text style={[styles.headerLabel]} numberOfLines={1}>{header}</Text>
-      <IconBtn icon={FontAwesome} name="close" onPress={onPress} />
+      <Text
+        style={[styles.headerLabel]}
+        numberOfLines={1}
+      >
+        {header}
+      </Text>
+      <IconBtn
+        icon={Ionicons}
+        name="close"
+        onPress={onPress}
+      />
     </View>
   );
 }

@@ -5,6 +5,7 @@ export default function InvoiceRefundsScreen() {
   return (
     <View>
       <InvoiceHero />
+      <Text style={{ fontFamily: "RajdhaniBold", fontSize: 20, paddingHorizontal: 20}}>Refunds</Text>
       <View>
         <Text>Hello</Text>
         <Text>Payment Summary</Text>

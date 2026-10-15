@@ -38,6 +38,7 @@ export default function InvoiceLayout() {
             headerTitle: `Invoice Details`,
           }}
         />
+
         <Stack.Screen
           name="items"
           options={{
@@ -45,71 +46,32 @@ export default function InvoiceLayout() {
           }}
         />
 
+        <Stack.Screen
+          name="dispatch"
+          options={{
+            headerTitle: "Dispatch",
+          }}
+        />
+
+        <Stack.Screen
+          name="history"
+          options={{
+            headerTitle: "History",
+          }}
+        />
+        
+        <Stack.Screen
+          name="transactions"
+          options={{
+            headerShown: false
+          }}
+        />
+        
         {/* Insights */}
         <Stack.Screen
           name="(insights)/preview"
           options={{
             headerTitle: "Invoice Preview",
-          }}
-        />
-        <Stack.Screen
-          name="(insights)/history"
-          options={{
-            headerTitle: "Invoice History",
-          }}
-        />
-
-        {/* Transactions */}
-        <Stack.Screen
-          name="(transactions)/payments"
-          options={{
-            headerTitle: "Payments",
-          }}
-        />
-        <Stack.Screen
-          name="(transactions)/refunds"
-          options={{
-            headerTitle: "Invoice Refunds",
-          }}
-        />
-
-        {/* Credit Notes */}
-        <Stack.Screen
-          name="(transactions)/credit-notes/index"
-          options={{
-            headerTitle: "Invoice Credit Notes",
-          }}
-        />
-        <Stack.Screen
-          name="(transactions)/credit-notes/new"
-          options={{
-            headerTitle: "New Credit Note",
-          }}
-        />
-        <Stack.Screen
-          name="(transactions)/credit-notes/[creditNoteId]"
-          options={{
-            headerTitle: "Credit Note Details",
-          }}
-        />
-
-        {/* Debit Notes */}
-        <Stack.Screen
-          name="(transactions)/debit-notes/index"
-          options={{
-            headerTitle: "Invoice Debit Notes",
-          }}
-        />
-        <Stack.Screen
-          name="(transactions)/debit-notes/new"
-          options={{
-            headerTitle: "New Debit Note",
-          }}
-        />
-        <Stack.Screen
-          name="(transactions)/debit-notes/[debitNoteId]"
-          options={{
-            headerTitle: "Debit Note Details",
           }}
         />
       </Stack>

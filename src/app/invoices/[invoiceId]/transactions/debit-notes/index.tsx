@@ -75,10 +75,10 @@ export default function InvoiceDebitNotesScreen() {
   return (
     <>
       <SafeAreaView
-        edges={["top", "bottom", "left", "right"]}
+        edges={["bottom", "left", "right"]}
         style={globalStyles.safeAreaView}
       >
-        <View style={{ flex: 1, gap: 12 }}>
+        <View style={{ flex: 1, gap: 16 }}>
           <InvoiceHero />
           <Text style={{ fontFamily: "RajdhaniBold", fontSize: 20, paddingHorizontal: 20}}>Debit Notes</Text>
           <FlatList

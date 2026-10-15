@@ -18,7 +18,7 @@ import { blue, gray, rose } from "@/constants/color-palettes";
 import { getInvoicePayments } from "@/features/invoices/services/sqlite/actions/payment";
 import usePagination from "@/hooks/usePagination";
 import globalStyles from "@/styles/globalStyles";
-import NewPaymentComponent from "@/features/invoices/components/invoice/actions/Payment";
+import NewPaymentComponent from "@/features/invoices/components/invoice/transactions/Payment";
 import TextLink from "@/components/ui/TextLink";
 import { Feather, FontAwesome } from "@expo/vector-icons";
 
@@ -115,8 +115,9 @@ export default function InvoicePaymentsScreen() {
   return (
     <>
       <SafeAreaView edges={["bottom", "left", "right"]} style={globalStyles.safeAreaView}>
-        <View style={{ flex: 1, gap: 14 }}>
+        <View style={{ flex: 1, gap: 16 }}>
           <InvoiceHero />
+          <Text style={{ fontFamily: "RajdhaniBold", fontSize: 20, paddingHorizontal: 20}}>Payments</Text>
           <FlatList
             data={data}
             keyExtractor={(item) => item.id}

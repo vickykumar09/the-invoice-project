@@ -1,6 +1,6 @@
 import globalStyles from "@/styles/globalStyles";
 import { useCallback } from "react";
-import { FlatList, StyleSheet, View } from "react-native";
+import { FlatList, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import Separator from "@/components/flatlist/ItemSeparator";
@@ -61,8 +61,9 @@ export default function InvoiceCreditNotesScreen() {
         edges={["bottom", "left", "right"]}
         style={globalStyles.safeAreaView}
       >
-        <View style={{ flex: 1, gap: 20 }}>
+        <View style={{ flex: 1, gap: 16 }}>
           <InvoiceHero />
+          <Text style={{ fontFamily: "RajdhaniBold", fontSize: 20, paddingHorizontal: 20}}>Credit Notes</Text>
           <FlatList
             data={[]}
             keyExtractor={(item) => item.id}

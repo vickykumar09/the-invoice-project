@@ -205,3 +205,34 @@ export const getInvoiceItems = async (
     throw error
   }
 }
+
+// Get the first 5 invoice items
+export const getFirstFiveInvoiceItems = async (
+  invoiceId: string
+): Promise<InvoiceItem[]> => {
+  try {
+    const db = await getDB();
+
+    const res = await db.getAllAsync<InvoiceItem>(
+      `
+      SELECT
+        i.*,
+        mu.name AS measure_unit_name,
+        mu.symbol AS measure_unit_symbol
+      FROM invoice_items i
+      LEFT JOIN measure_units mu
+        ON mu.id = i.measure_unit_id
+      WHERE i.invoice_id = ?
+      ORDER BY i.created_at ASC
+      LIMIT 5
+      `,
+      [invoiceId]
+    );
+
+    return res;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+

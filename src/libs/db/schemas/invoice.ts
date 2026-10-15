@@ -45,7 +45,7 @@ export const INVOICE_SCHEMA = `
     grand_total INTEGER NOT NULL DEFAULT 0,
     paid_total INTEGER NOT NULL DEFAULT 0,
 
-    payment_due_date TEXT NOT NULL,
+    payment_due_date TEXT,
     internal_note TEXT,
     
     created_at TEXT NOT NULL,
@@ -464,6 +464,47 @@ export const INVOICE_DISPATCH_SCHEMA = `
     FOREIGN KEY (invoice_id)
       REFERENCES invoices(id)
   )
+
+
+  CREATE TABLE invoice_dispatch (
+    invoice_id TEXT PRIMARY KEY
+        REFERENCES invoices(id)
+        ON DELETE CASCADE,
+
+    dispatch_date TEXT,
+    dispatch_document_number TEXT,
+    dispatch_document_date TEXT,
+    dispatch_from TEXT,
+
+    transporter_name TEXT,
+    transporter_gstin TEXT,
+    transport_document_number TEXT,
+    transport_document_date TEXT,
+    vehicle_number TEXT,
+
+    transport_mode TEXT
+        CHECK (
+            transport_mode IS NULL
+            OR transport_mode IN (
+                'road',
+                'rail',
+                'air',
+                'ship',
+                'other'
+            )
+        ),
+
+    distance_km INTEGER
+        CHECK (
+            distance_km IS NULL
+            OR distance_km >= 0
+        ),
+
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    is_synced INTEGER NOT NULL DEFAULT 0
+        CHECK (is_synced IN (0, 1))
+);
 `;
 
 export const TABLES = {
